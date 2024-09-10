@@ -1,135 +1,100 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<%@ page import="java.io.PrintWriter" %>
-<%@ page import="bbs_review.Bbs_reviewDAO" %>
-<%@ page import="bbs_review.Bbs_review" %>
-<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.sql.*, java.util.ArrayList" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta name="viewport" content="width=device-width", initial-scale="1">
-<link rel="stylesheet" href="css/bootstrap.css">
-<link rel="stylesheet" href="css/custom.css">
-<title>JSP 게시판 웹 사이트</title>
-<style type="text/css">
-	a, a:hover {
-		color:#000000;
-		text-decoration: none;
-	}
-</style>
+    <meta charset="UTF-8">
+    <title>리뷰 게시판</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <style type="text/css">
+        a, a:hover {
+            color: #000000;
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
-	<%
-		String userID = null;
-		if (session.getAttribute("userID") != null) {
-			userID = (String) session.getAttribute("userID");
-		}
-		int pageNumber = 1;
-		if (request.getParameter("pageNumber") != null) {
-			pageNumber = Integer.parseInt(request.getParameter("pageNumber"));
-		}
-	%>
-	<nav class="navbar navbar-default">
-		<div class="navbar-header">
-			<button type="button" class="navbar-toggle collapsed"
-				data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
-				aria-expanded="false">
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-			</button>
-			<a class="navbar-brand" href="main.jsp">JSP 게시판 웹 사이트</a>
-		</div>
-		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-			<ul class="nav navbar-nav">
-				<li><a href="main.jsp">Home</a></li>
-				<li><a href="bbs.jsp">Genaral</a></li>
-				<li class="active"><a href="bbs_review.jsp">Review</a></li>
-				<li><a href="bbs_galary.jsp">Galary</a></li>
-				<li><a href="bbs_music.jsp">Musics</a></li>
-				<li><a href="bbs_marketplace.jsp">Market</a></li>
-			</ul>
-			<%
-				if(userID == null) {
-			%>
-			<ul class="nav navbar-nav navbar-right">
-				<li class="dropdown">
-				 <a href="#" class=dropdown-toggle
-				 	data-toggle="dropdown" role="botton" aria-haspopup="true"
-				 	aria-expanded="false">접속하기<span class="caret"></span></a>
-				 <ul class="dropdown-menu">
-				 	<li><a href="login.jsp">로그인</a></li>
-				 	<li><a href="join.jsp">회원가입</a></li>
-				 </ul>
-				</li>
-			</ul>
-			<%
-				} else {
-			%>
-			<ul class="nav navbar-nav navbar-right">
-				<li class="dropdown">
-				 <a href="#" class=dropdown-toggle
-				 	data-toggle="dropdown" role="botton" aria-haspopup="true"
-				 	aria-expanded="false">회원관리<span class="caret"></span></a>
-				 <ul class="dropdown-menu">
-				 	<li><a href="logoutAction.jsp">로그아웃</a></li>
-				 </ul>
-				</li>
-			</ul>
-			<%
-				}
-			%>
-		</div>
-	</nav>
-	<div class="container">
-		<div class="row">
-			<table class="table table-striped" style="text-align: center; border: 1px solid #dddddd">
-			<thead>
-				<tr>
-					<th style="background-color: #eeeeee; text-align: center;">번호</th>
-					<th style="background-color: #eeeeee; text-align: center;">제목</th>
-					<th style="background-color: #eeeeee; text-align: center;">작성자</th>
-					<th style="background-color: #eeeeee; text-align: center;">작성일 </th>
-				</tr>
-			</thead>
-			<tbody>
-			    <%
-			        Bbs_reviewDAO bbsDAO = new Bbs_reviewDAO();
-			        ArrayList<Bbs_review> list = bbsDAO.getList(pageNumber);
-			        for(int i = 0; i < list.size(); i++) {
-			    %>
-			    <tr>
-			        <td><%= list.get(i).getBbsID() %></td>
-			        <td><a href="view.jsp?bbsID=<%= list.get(i).getBbsID() %>">
-			            <%= list.get(i).getBbsTitle().replaceAll(" ", "&nbsp;")
-			                .replaceAll("<", "&lt;")
-			                .replaceAll(">", "&gt;")
-			                .replaceAll("\n", "<br>") %>
-			        </a></td>
-			        <td><%= list.get(i).getUserID() %></td>
-			        <td><%= list.get(i).getBbsDate().substring(0, 11) + list.get(i).getBbsDate().substring(11, 13) + "시" + list.get(i).getBbsDate().substring(14, 16) + "분" %></td>
-			    </tr>
-			    <%
-			        }
-			    %>
-			</tbody>
-		</table>
-		<%
-			if(pageNumber != 1) {
-		%>
-			<a href="bbs.jsp?pageNumber=<%=pageNumber - 1%>" class="btn btn-success btn-arraw-left">이전</a>
-		<%
-			} if (bbsDAO.nextPage(pageNumber + 1)) {
-		%>
-			<a href="bbs.jsp?pageNumber=<%=pageNumber + 1%>" class="btn btn-success btn-arraw-left">다음</a>
-		<%
-			}
-		%>
-		<a href="write.jsp" class="btn btn-primary pull-right">글쓰기</a>
-		</div>
-	</div>
-	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-	<script src="js/bootstrap.js"></script>
+    <!-- General 게시판에서 사용된 navbar 복사 -->
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="main.jsp">JSP 게시판 웹 사이트</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li><a href="main.jsp">Home</a></li>
+                <li><a href="bbs.jsp">General</a></li>
+                <li class="active"><a href="bbs_review.jsp">Review</a></li>
+                <li><a href="bbs_galary.jsp">Gallery</a></li>
+                <li><a href="bbs_music.jsp">Musics</a></li>
+                <li><a href="bbs_marketplace.jsp">Market</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="login.jsp"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2>리뷰 게시판</h2>
+        <table class="table table-striped" style="text-align: center; border: 1px solid #dddddd">
+            <thead>
+                <tr>
+                    <th style="background-color: #eeeeee; text-align: center;">번호</th>
+                    <th style="background-color: #eeeeee; text-align: center;">제목</th>
+                    <th style="background-color: #eeeeee; text-align: center;">작성자</th>
+                    <th style="background-color: #eeeeee; text-align: center;">작성일</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%
+                    Connection conn = null;
+                    PreparedStatement pstmt = null;
+                    ResultSet rs = null;
+                    String dbURL = "jdbc:mysql://localhost:3306/BBS_REVIEW";
+                    String dbID = "root";
+                    String dbPassword = "root";
+
+                    try {
+                        Class.forName("com.mysql.jdbc.Driver");
+                        conn = DriverManager.getConnection(dbURL, dbID, dbPassword);
+
+                        // 리뷰 목록을 가져오는 SQL
+                        String SQL = "SELECT * FROM BBS_REVIEW WHERE bbsAvailable = 1 ORDER BY bbsID DESC";
+                        pstmt = conn.prepareStatement(SQL);
+                        rs = pstmt.executeQuery();
+
+                        while (rs.next()) {
+                            int bbsID = rs.getInt("bbsID");
+                            String bbsTitle = rs.getString("bbsTitle");
+                            String userID = rs.getString("userID");
+                            String bbsDate = rs.getString("bbsDate").substring(0, 10); // 날짜만 출력
+
+                %>
+                <tr>
+                    <td><%= bbsID %></td>
+                    <td><a href="view_review.jsp?bbsID=<%= bbsID %>"><%= bbsTitle %></a></td>
+                    <td><%= userID %></td>
+                    <td><%= bbsDate %></td>
+                </tr>
+                <%
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    } finally {
+                        if (rs != null) rs.close();
+                        if (pstmt != null) pstmt.close();
+                        if (conn != null) conn.close();
+                    }
+                %>
+            </tbody>
+        </table>
+        
+        <!-- 리뷰 작성 버튼 -->
+        <a href="write_review.jsp" class="btn btn-primary">리뷰 작성</a>
+    </div>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="js/bootstrap.js"></script>
 </body>
 </html>

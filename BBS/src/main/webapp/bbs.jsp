@@ -46,7 +46,7 @@
 				<li><a href="main.jsp">Home</a></li>
 				<li class="active"><a href="bbs.jsp">Genaral</a></li>
 				<li><a href="bbs_review.jsp">Review</a></li>
-				<li><a href="bbs_galary.jsp">Galary</a></li>
+				<li><a href="bbs_gallery.jsp">Gallery</a></li>
 				<li><a href="bbs_music.jsp">Musics</a></li>
 				<li><a href="bbs_marketplace.jsp">Market</a></li>
 			</ul>

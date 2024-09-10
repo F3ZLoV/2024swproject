@@ -6,3 +6,28 @@
 h1 {
 	font-family : 'Hanna';
 }
+
+/* custom.css에서 navbar 색상 변경 */
+.navbar {
+    background-color: #4CAF50;  /* 원하는 색상으로 변경 */
+    border-color: #388E3C;      /* 경계 색상도 함께 변경 */
+}
+
+.navbar-default .navbar-brand {
+    color: white; /* 브랜드명 색상 */
+}
+
+.navbar-default .navbar-nav > li > a {
+    color: white; /* 메뉴 항목 색상 */
+}
+
+/* 메뉴 항목 hover 시 색상 변경 */
+.navbar-default .navbar-nav > li > a:hover {
+    color: #FFD700;  /* 원하는 hover 색상 */
+}
+
+/* 메뉴 active 상태 색상 */
+.navbar-default .navbar-nav > .active > a {
+    background-color: #388E3C; /* active 상태에서의 배경 색상 */
+    color: white; /* 글자 색상 */
+}
