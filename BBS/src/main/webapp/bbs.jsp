@@ -125,6 +125,31 @@
 		<a href="write.jsp" class="btn btn-primary pull-right">글쓰기</a>
 		</div>
 	</div>
+	<!-- FOOTER -->
+	<footer style="background-color: #000000; color: #ffffff">
+		<div class="container">
+			<br>
+			<div class="row">
+				<div class="col-sm-2" style="text-align: center"><h5>Copyright&copy; F3ZLoV All rights reserved.</h5><h5>박태준(Taejoon Park)</h5></div>
+				<div class="col-sm-4"><h4>개발자 소개</h4><p>저는 박태준입니다. 인하공업전문대학교에서 공부를 하고 있습니다.</p></div>
+				<div class="col-sm-2"><h4 style="text-align: center;">Navigation</h4>
+					<div class="list-group">
+						<a href="#" class="list-group-item">소개</a>
+						<a href="#" class="list-group-item">이용약관</a>
+						<a href="#" class="list-group-item">개인정보처리방침</a>
+					</div>
+				</div>
+				<div class="col-sm-2"><h4 style="text-align: center;">Contact</h4>
+					<div class="list-group">
+						<a href="#" class="list-group-item">010-0000-0000</a>
+						<a href="#" class="list-group-item">fsirtru@gmail.com</a>
+						<a href="#" class="list-group-item">github.com/F3ZLoV</a>
+					</div>
+				</div>
+				<div class="col-sm-2"><h4 style="text-align: center;"><span class="glyphicon glyphicon-ok"></span>&nbsp;by 박태준</h4></div>
+			</div>
+		</div>
+	</footer>
 	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 	<script src="js/bootstrap.js"></script>
 </body>
