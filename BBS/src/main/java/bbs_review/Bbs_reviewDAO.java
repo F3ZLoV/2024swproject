@@ -10,7 +10,7 @@ public class Bbs_reviewDAO {
     // 생성자: DB 연결 설정
     public Bbs_reviewDAO() {
         try {
-            String dbURL = "jdbc:mysql://localhost:3306/BBS_REVIEW"; // DB URL
+            String dbURL = "jdbc:mysql://localhost:3306/BBS"; // DB URL
             String dbID = "root";    // DB ID
             String dbPassword = "root"; // DB Password
             Class.forName("com.mysql.jdbc.Driver");
