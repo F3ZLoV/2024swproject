@@ -14,7 +14,7 @@
 </head>
 <body>
 	<%
-		String userID = null;
+	String userID = null;
 		if (session.getAttribute("userID") != null) {
 			userID = (String) session.getAttribute("userID");
 		}

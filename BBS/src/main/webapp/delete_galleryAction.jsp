@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ page import="bbs_review.Bbs_reviewDAO" %>
-<%@ page import="bbs_review.Bbs_review" %>
+<%@ page import="bbs_gallery.Bbs_galleryDAO" %>
+<%@ page import="bbs_gallery.Bbs_gallery" %>
 <%@ page import="java.io.PrintWriter" %>
 <%
 request.setCharacterEncoding("UTF-8");
@@ -37,7 +37,7 @@ request.setCharacterEncoding("UTF-8");
 			script.println("location.href = 'bbs_review.jsp';");
 			script.println("</script>");
 		}
-		Bbs_review bbs = new Bbs_reviewDAO().getBbs(bbsID);
+		Bbs_gallery bbs = new Bbs_galleryDAO().getBbs(bbsID);
 		if(!userID.equals(bbs.getUserID())) {
 			PrintWriter script = response.getWriter();
 			script.println("<script>");
@@ -45,28 +45,19 @@ request.setCharacterEncoding("UTF-8");
 			script.println("location.href = 'bbs_review.jsp';");
 			script.println("</script>");
 		} else {
-			if(request.getParameter("bbsTitle") == null || request.getParameter("bbsContent") == null
-			|| request.getParameter("bbsTitle").equals("") || request.getParameter("bbsContent").equals("")) {
+		Bbs_galleryDAO bbsDAO = new Bbs_galleryDAO();
+		int result = bbsDAO.delete(bbsID);
+		if(result == -1) {
 			PrintWriter script = response.getWriter();
 			script.println("<script>");
-			script.println("alert('입력이 안 된 사항이 있습니다.');");
+			script.println("alert('글 삭제에 실패했습니다.');");
 			script.println("history.back()");
 			script.println("</script>");
 		} else {
-			Bbs_reviewDAO bbsDAO = new Bbs_reviewDAO();
-			int result = bbsDAO.update(bbsID, request.getParameter("bbsTitle"), request.getParameter("bbsContent"));
-			if(result == -1) {
-				PrintWriter script = response.getWriter();
-				script.println("<script>");
-				script.println("alert('글 수정에 실패했습니다.');");
-				script.println("history.back()");
-				script.println("</script>");
-			} else {
-				PrintWriter script = response.getWriter();
-				script.println("<script>");
-				script.println("location.href = 'bbs_review.jsp'");
-				script.println("</script>");
-			}
+			PrintWriter script = response.getWriter();
+			script.println("<script>");
+			script.println("location.href = 'bbs_review.jsp'");
+			script.println("</script>");
 		}
 		}
 	%>

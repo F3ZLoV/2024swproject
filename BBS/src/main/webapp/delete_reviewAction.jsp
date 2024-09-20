@@ -3,7 +3,9 @@
 <%@ page import="bbs_review.Bbs_reviewDAO" %>
 <%@ page import="bbs_review.Bbs_review" %>
 <%@ page import="java.io.PrintWriter" %>
-<% request.setCharacterEncoding("UTF-8"); %>
+<%
+request.setCharacterEncoding("UTF-8");
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,7 +14,7 @@
 </head>
 <body>
 	<%
-		String userID = null;
+	String userID = null;
 		if(session.getAttribute("userID") != null) {
 			userID = (String) session.getAttribute("userID");
 		}
@@ -43,22 +45,21 @@
 			script.println("location.href = 'bbs_review.jsp';");
 			script.println("</script>");
 		} else {
-				Bbs_reviewDAO bbsDAO = new Bbs_reviewDAO();
-				int result = bbsDAO.delete(bbsID);
-				if(result == -1) {
-					PrintWriter script = response.getWriter();
-					script.println("<script>");
-					script.println("alert('글 삭제에 실패했습니다.');");
-					script.println("history.back()");
-					script.println("</script>");
-				} else {
-					PrintWriter script = response.getWriter();
-					script.println("<script>");
-					script.println("location.href = 'bbs_review.jsp'");
-					script.println("</script>");
-				}
+		Bbs_reviewDAO bbsDAO = new Bbs_reviewDAO();
+		int result = bbsDAO.delete(bbsID);
+		if(result == -1) {
+			PrintWriter script = response.getWriter();
+			script.println("<script>");
+			script.println("alert('글 삭제에 실패했습니다.');");
+			script.println("history.back()");
+			script.println("</script>");
+		} else {
+			PrintWriter script = response.getWriter();
+			script.println("<script>");
+			script.println("location.href = 'bbs_review.jsp'");
+			script.println("</script>");
 		}
-		
+		}
 	%>
 </body>
 </html>
