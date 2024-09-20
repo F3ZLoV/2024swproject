@@ -112,16 +112,42 @@
 			</tbody>
 		</table>
 		<%
-			if(pageNumber != 1) {
-		%>
-			<a href="bbs_review.jsp?pageNumber=<%=pageNumber - 1%>" class="btn btn-success btn-arraw-left">이전</a>
-		<%
-			} if (bbsDAO.nextPage(pageNumber + 1)) {
-		%>
-			<a href="bbs_review.jsp?pageNumber=<%=pageNumber + 1%>" class="btn btn-success btn-arraw-left">다음</a>
-		<%
-			}
-		%>
+            int totalCount = bbsDAO.getTotalCount();  // 총 게시글 수 가져오기
+            int pageSize = 10;  // 페이지당 게시글 수
+            int totalPages = (int) Math.ceil((double) totalCount / pageSize);  // 총 페이지 수 계산
+            int pageBlock = 5;  // 한 번에 표시할 페이지 번호 개수
+            int startPage = ((pageNumber - 1) / pageBlock) * pageBlock + 1;
+            int endPage = startPage + pageBlock - 1;
+            if (endPage > totalPages) {
+                endPage = totalPages;
+            }
+        %>
+
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <% if (startPage > 1) { %>
+                <li>
+                    <a href="bbs.jsp?pageNumber=<%=startPage - 1%>" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <% } %>
+                
+                <% for (int i = startPage; i <= endPage; i++) { %>
+                <li class="<%= (i == pageNumber) ? "active" : "" %>">
+                    <a href="bbs.jsp?pageNumber=<%=i%>"><%=i%></a>
+                </li>
+                <% } %>
+                
+                <% if (endPage < totalPages) { %>
+                <li>
+                    <a href="bbs.jsp?pageNumber=<%=endPage + 1%>" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                <% } %>
+            </ul>
+        </nav>
 		<a href="write_review.jsp" class="btn btn-primary pull-right">글쓰기</a>
 		</div>
 	</div>

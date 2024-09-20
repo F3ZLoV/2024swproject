@@ -153,4 +153,19 @@ public class BbsDAO {
 		}
 		return -1; // 데이터베이스 오류
 	}
+	
+	public int getTotalCount() {
+	    String SQL = "SELECT COUNT(*) FROM BBS";
+	    try {
+	        PreparedStatement pstmt = conn.prepareStatement(SQL);
+	        ResultSet rs = pstmt.executeQuery();
+	        if (rs.next()) {
+	            return rs.getInt(1);  // 총 게시글 수 반환
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return -1;  // 오류 발생 시
+	}
+
 }
