@@ -1,14 +1,14 @@
-package bbs_gallery;
+package bbs_market;
 
 import java.sql.*;
 import java.util.ArrayList;
 
-public class Bbs_galleryDAO {
+public class Bbs_marketDAO {
     private Connection conn;  // DB 연결 객체
     private ResultSet rs;     // 결과셋 객체
 
     // 생성자: DB 연결 설정
-    public Bbs_galleryDAO() {
+    public Bbs_marketDAO() {
         try {
             String dbURL = "jdbc:mysql://localhost:3306/BBS?useSSL=false"; // DB URL
             String dbID = "root";    // DB ID
@@ -37,7 +37,7 @@ public class Bbs_galleryDAO {
 
     // 다음 게시글 번호 가져오기
     public int getNext() {
-        String SQL = "SELECT bbsID FROM BBS_GALLERY ORDER BY bbsID DESC";
+        String SQL = "SELECT bbsID FROM BBS_MARKET ORDER BY bbsID DESC";
         try {
             PreparedStatement pstmt = conn.prepareStatement(SQL);
             rs = pstmt.executeQuery();
@@ -51,8 +51,9 @@ public class Bbs_galleryDAO {
         return -1; // DB 오류
     }
 
-    public int write(String bbsTitle, String userID, String bbsContent, String bbsImage) {
-        String SQL = "INSERT INTO BBS_GALLERY (bbsID, bbsTitle, userID, bbsDate, bbsContent, bbsAvailable, bbsImage) VALUES (?, ?, ?, ?, ?, 1, ?)";
+    // 리뷰 작성 메서드
+    public int write(String bbsTitle, String userID, String bbsContent) {
+        String SQL = "INSERT INTO BBS_MARKET (bbsID, bbsTitle, userID, bbsDate, bbsContent, bbsAvailable) VALUES (?, ?, ?, ?, ?, 1)";
         try {
             PreparedStatement pstmt = conn.prepareStatement(SQL);
             pstmt.setInt(1, getNext());       // 다음 게시글 ID
@@ -60,7 +61,6 @@ public class Bbs_galleryDAO {
             pstmt.setString(3, userID);       // 작성자 ID
             pstmt.setString(4, getDate());    // 작성 날짜
             pstmt.setString(5, bbsContent);   // 게시글 내용
-            pstmt.setString(6, bbsImage);     // 이미지 경로
             return pstmt.executeUpdate();     // SQL 실행
         } catch (Exception e) {
             e.printStackTrace();
@@ -68,17 +68,16 @@ public class Bbs_galleryDAO {
         return -1; // DB 오류
     }
 
-
-
-    public ArrayList<Bbs_gallery> getList(int pageNumber) {
-        String SQL = "SELECT * FROM BBS_GALLERY WHERE bbsID < ? AND bbsAvailable = 1 ORDER BY bbsID DESC LIMIT 10";
-        ArrayList<Bbs_gallery> list = new ArrayList<Bbs_gallery>();
+    // 리뷰 목록 가져오기
+    public ArrayList<Bbs_market> getList(int pageNumber) {
+        String SQL = "SELECT * FROM BBS_MARKET WHERE bbsID < ? AND bbsAvailable = 1 ORDER BY bbsID DESC LIMIT 10";
+        ArrayList<Bbs_market> list = new ArrayList<Bbs_market>();
         try {
             PreparedStatement pstmt = conn.prepareStatement(SQL);
             pstmt.setInt(1, getNext() - (pageNumber - 1) * 10); // 페이징 처리
             rs = pstmt.executeQuery();
             while (rs.next()) {
-                Bbs_gallery bbs = new Bbs_gallery();
+                Bbs_market bbs = new Bbs_market();
                 bbs.setBbsID(rs.getInt(1));
                 bbs.setBbsTitle(rs.getString(2));
                 bbs.setUserID(rs.getString(3));
@@ -93,9 +92,9 @@ public class Bbs_galleryDAO {
         return list; // DB 오류
     }
 
-
+    // 다음 페이지 여부 확인
     public boolean nextPage(int pageNumber) {
-        String SQL = "SELECT * FROM BBS_GALLERY WHERE bbsID < ? AND bbsAvailable = 1";
+        String SQL = "SELECT * FROM BBS_MARKET WHERE bbsID < ? AND bbsAvailable = 1";
         try {
             PreparedStatement pstmt = conn.prepareStatement(SQL);
             pstmt.setInt(1, getNext() - (pageNumber - 1) * 10);
@@ -109,22 +108,21 @@ public class Bbs_galleryDAO {
         return false; // DB 오류 또는 다음 페이지 없음
     }
 
-
-    public Bbs_gallery getBbs(int bbsID) {
-        String SQL = "SELECT * FROM BBS_GALLERY WHERE bbsID = ?";
+    // 특정 리뷰 가져오기
+    public Bbs_market getBbs(int bbsID) {
+        String SQL = "SELECT * FROM BBS_MARKET WHERE bbsID = ?";
         try {
             PreparedStatement pstmt = conn.prepareStatement(SQL);
             pstmt.setInt(1, bbsID);
             rs = pstmt.executeQuery();
             if (rs.next()) {
-                Bbs_gallery bbs = new Bbs_gallery();
-                bbs.setBbsID(rs.getInt(1));            // bbsID
-                bbs.setBbsTitle(rs.getString(2));      // bbsTitle
-                bbs.setUserID(rs.getString(3));        // userID
-                bbs.setBbsDate(rs.getString(4));       // bbsDate
-                bbs.setBbsContent(rs.getString(5));    // bbsContent
-                bbs.setBbsAvailable(rs.getInt(6));     // bbsAvailable
-                bbs.setBbsImage(rs.getString(7));      // bbsImage - 추가
+                Bbs_market bbs = new Bbs_market();
+                bbs.setBbsID(rs.getInt(1));
+                bbs.setBbsTitle(rs.getString(2));
+                bbs.setUserID(rs.getString(3));
+                bbs.setBbsDate(rs.getString(4));
+                bbs.setBbsContent(rs.getString(5));
+                bbs.setBbsAvailable(rs.getInt(6));
                 return bbs;
             }
         } catch (Exception e) {
@@ -133,10 +131,9 @@ public class Bbs_galleryDAO {
         return null; // DB 오류 또는 게시글 없음
     }
 
-
-
+    // 리뷰 수정 메서드
     public int update(int bbsID, String bbsTitle, String bbsContent) {
-        String SQL = "UPDATE BBS_GALLERY SET bbsTitle = ?, bbsContent = ? WHERE bbsID = ?";
+        String SQL = "UPDATE BBS_MARKET SET bbsTitle = ?, bbsContent = ? WHERE bbsID = ?";
         try {
             PreparedStatement pstmt = conn.prepareStatement(SQL);
             pstmt.setString(1, bbsTitle);
@@ -149,9 +146,9 @@ public class Bbs_galleryDAO {
         return -1; // DB 오류
     }
 
-
+    // 리뷰 삭제 메서드 (게시글을 삭제 처리함)
     public int delete(int bbsID) {
-        String SQL = "UPDATE BBS_GALLERY SET bbsAvailable = 0 WHERE bbsID = ?";
+        String SQL = "UPDATE BBS_MARKET SET bbsAvailable = 0 WHERE bbsID = ?";
         try {
             PreparedStatement pstmt = conn.prepareStatement(SQL);
             pstmt.setInt(1, bbsID);
@@ -163,7 +160,7 @@ public class Bbs_galleryDAO {
     }
     
     public int getTotalCount() {
-	    String SQL = "SELECT COUNT(*) FROM BBS_GALLERY";
+	    String SQL = "SELECT COUNT(*) FROM BBS_MARKET";
 	    try {
 	        PreparedStatement pstmt = conn.prepareStatement(SQL);
 	        ResultSet rs = pstmt.executeQuery();

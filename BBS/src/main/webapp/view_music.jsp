@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import="java.io.PrintWriter" %>
-<%@ page import="bbs.Bbs" %>
-<%@ page import="bbs.BbsDAO" %>
+<%@ page import="bbs_music.Bbs_music" %>
+<%@ page import="bbs_music.Bbs_musicDAO" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,7 +14,7 @@
 </head>
 <body>
 	<%
-		String userID = null;
+	String userID = null;
 		if (session.getAttribute("userID") != null) {
 			userID = (String) session.getAttribute("userID");
 		}
@@ -29,7 +29,7 @@
 			script.println("location.href = 'bbs.jsp';");
 			script.println("</script>");
 		}
-		Bbs bbs = new BbsDAO().getBbs(bbsID);
+		Bbs_music bbs = new Bbs_musicDAO().getBbs(bbsID);
 	%>
 	<nav class="navbar navbar-default">
 		<div class="navbar-header">
@@ -45,10 +45,10 @@
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
 				<li><a href="main.jsp">Home</a></li>
-				<li class="active"><a href="bbs.jsp">General</a></li>
+				<li><a href="bbs.jsp">General</a></li>
 				<li><a href="bbs_review.jsp">Review</a></li>
 				<li><a href="bbs_gallery.jsp">Gallery</a></li>
-				<li><a href="bbs_music.jsp">Musics</a></li>
+				<li class="active"><a href="bbs_music.jsp">Musics</a></li>
 				<li><a href="bbs_market.jsp">Market</a></li>
 			</ul>
 			<%
@@ -114,8 +114,8 @@
 			<%
 				if(userID != null && userID.equals(bbs.getUserID())) {
 			%>
-				<a href="update.jsp?bbsID=<%= bbsID %>" class="btn btn-primary">수정</a>
-				<a onclick="return confirm('정말로 삭제하시겠습니까?')" href="deleteAction.jsp?bbsID=<%= bbsID %>" class="btn btn-primary">삭제</a>
+				<a href="update_music.jsp?bbsID=<%= bbsID %>" class="btn btn-primary">수정</a>
+				<a onclick="return confirm('정말로 삭제하시겠습니까?')" href="delete_musicAction.jsp?bbsID=<%= bbsID %>" class="btn btn-primary">삭제</a>
 			<%
 				}
 			%>

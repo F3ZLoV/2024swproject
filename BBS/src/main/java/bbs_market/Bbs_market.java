@@ -1,6 +1,6 @@
-package bbs_gallery;
+package bbs_market;
 
-public class Bbs_gallery {
+public class Bbs_market {
 
     private int bbsID;        // 게시글 ID
     private String bbsTitle;  // 게시글 제목
@@ -8,18 +8,9 @@ public class Bbs_gallery {
     private String bbsDate;   // 작성 날짜
     private String bbsContent; // 게시글 내용
     private int bbsAvailable; // 게시글 사용 가능 여부 (1: 활성, 0: 삭제)
-    private String bbsImage;
-    
-    public String getBbsImage() {
-		return bbsImage;
-	}
 
-	public void setBbsImage(String bbsImage) {
-		this.bbsImage = bbsImage;
-	}
-
-	// 기본 생성자
-    public Bbs_gallery() {}
+    // 기본 생성자
+    public Bbs_market() {}
 
     // getter와 setter 메서드
     public int getBbsID() {

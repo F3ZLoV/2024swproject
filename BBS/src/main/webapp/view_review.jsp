@@ -45,11 +45,11 @@
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
 				<li><a href="main.jsp">Home</a></li>
-				<li><a href="bbs.jsp">Genaral</a></li>
+				<li><a href="bbs.jsp">General</a></li>
 				<li class="active"><a href="bbs_review.jsp">Review</a></li>
 				<li><a href="bbs_gallery.jsp">Gallery</a></li>
 				<li><a href="bbs_music.jsp">Musics</a></li>
-				<li><a href="bbs_marketplace.jsp">Market</a></li>
+				<li><a href="bbs_market.jsp">Market</a></li>
 			</ul>
 			<%
 				if(userID == null) {

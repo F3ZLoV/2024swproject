@@ -31,11 +31,11 @@
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
 				<li><a href="main.jsp">Home</a></li>
-				<li><a href="bbs.jsp">Genaral</a></li>
+				<li><a href="bbs.jsp">General</a></li>
 				<li><a href="bbs_review.jsp">Review</a></li>
 				<li class="active"><a href="bbs_gallery.jsp">Gallery</a></li>
 				<li><a href="bbs_music.jsp">Musics</a></li>
-				<li><a href="bbs_marketplace.jsp">Market</a></li>
+				<li><a href="bbs_market.jsp">Market</a></li>
 			</ul>
 			<%
 				if(userID == null) {
@@ -71,23 +71,29 @@
 	</nav>
 	<div class="container">
 		<div class="row">
-		<form method="post" action="write_gallery_action.jsp">
-		<table class="table table-striped" style="text-align: center; border: 1px solid #dddddd">
-			<thead>
-				<tr>
-					<th colspan="2" style="background-color: #eeeeee; text-align: center;">리뷰 쓰기</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td><input type="text" class="form-control" placeholder="글 제목" name="bbsTitle" maxlength="50"></td>
-				</tr>
-				<tr>
-					<td><textarea class="form-control" placeholder="글 내용" name="bbsContent" maxlength="2048" style="height: 350px"></textarea></td>
-				</tr>
-			</tbody>
-		</table>
-		<input type="submit" class="btn btn-primary pull-right" value="글쓰기">
+		<form method="post" action="write_gallery_action.jsp" enctype="multipart/form-data">
+		    <table class="table table-striped" style="text-align: center; border: 1px solid #dddddd">
+		        <thead>
+		            <tr>
+		                <th colspan="2" style="background-color: #eeeeee; text-align: center;">갤러리</th>
+		            </tr>
+		        </thead>
+		        <tbody>
+		            <tr>
+		                <td><input type="text" class="form-control" placeholder="글 제목" name="bbsTitle" maxlength="50"></td>
+		            </tr>
+		            <tr>
+		                <td><textarea class="form-control" placeholder="글 내용" name="bbsContent" maxlength="2048" style="height: 350px"></textarea></td>
+		            </tr>
+		            <tr>
+		                <td>
+		                    <label for="image">이미지 업로드:</label>
+		                    <input type="file" name="image" id="image" class="form-control">
+		                </td>
+		            </tr>
+		        </tbody>
+		    </table>
+		    <input type="submit" class="btn btn-primary pull-right" value="글쓰기">
 		</form>
 		</div>
 	</div>

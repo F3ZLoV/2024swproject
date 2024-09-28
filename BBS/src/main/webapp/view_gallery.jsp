@@ -45,11 +45,11 @@
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
 				<li><a href="main.jsp">Home</a></li>
-				<li><a href="bbs.jsp">Genaral</a></li>
+				<li><a href="bbs.jsp">General</a></li>
 				<li><a href="bbs_review.jsp">Review</a></li>
 				<li class="active"><a href="bbs_gallery.jsp">Gallery</a></li>
 				<li><a href="bbs_music.jsp">Musics</a></li>
-				<li><a href="bbs_marketplace.jsp">Market</a></li>
+				<li><a href="bbs_market.jsp">Market</a></li>
 			</ul>
 			<%
 				if(userID == null) {
@@ -107,6 +107,17 @@
 					<tr>
 						<td>내용</td>
 						<td colspan="2" style="min-height: 200px; text-align: left;"><%= bbs.getBbsContent().replaceAll(" ", "&nbsp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br>") %></td>
+						<%
+						    int postId = Integer.parseInt(request.getParameter("id"));
+						    Bbs_galleryDAO dao = new Bbs_galleryDAO();
+						    Bbs_gallery post = dao.getBbs(postId);
+						%>
+						<!-- 이미지가 있을 경우 출력 -->
+						<% if (post.getBbsImage() != null && !post.getBbsImage().isEmpty()) { %>
+						<td>
+							<img src="<%= post.getBbsImage() %>" alt="게시글 이미지" style="max-width: 100%; height: auto;">
+						</td>
+						<% } %>
 					</tr>
 				</tbody>
 			</table>

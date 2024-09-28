@@ -1,4 +1,4 @@
-package bbs;
+package bbs_music;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -6,11 +6,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
-public class BbsDAO {
+public class Bbs_musicDAO {
 	private Connection conn;
 	private ResultSet rs;
 	
-	public BbsDAO() {
+	public Bbs_musicDAO() {
 		try {
 			String dbURL = "jdbc:mysql://localhost:3306/BBS?useSSL=false";
 			String dbID = "root";
@@ -37,7 +37,7 @@ public class BbsDAO {
 	}
 	
 	public int getNext() {
-		String SQL = "SELECT bbsID FROM BBS ORDER BY bbsID DESC";
+		String SQL = "SELECT bbsID FROM BBS_MUSIC ORDER BY bbsID DESC";
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			rs = pstmt.executeQuery();
@@ -52,7 +52,7 @@ public class BbsDAO {
 	}
 	
 	public int write(String bbsTitle, String userID, String bbsContent) {
-		String SQL = "INSERT INTO BBS VALUES (?, ?, ?, ?, ?, ?)";
+		String SQL = "INSERT INTO BBS_MUSIC VALUES (?, ?, ?, ?, ?, ?)";
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1,  getNext());
@@ -68,15 +68,15 @@ public class BbsDAO {
 		return -1; // 데이터베이스 오류
 	}
 	
-	public ArrayList<Bbs> getList(int pageNumber) {
-		String SQL = "SELECT * FROM BBS WHERE bbsID < ? AND bbsAvailable = 1 ORDER BY bbsID DESC LIMIT 10";
-		ArrayList<Bbs> list = new ArrayList<Bbs>();
+	public ArrayList<Bbs_music> getList(int pageNumber) {
+		String SQL = "SELECT * FROM BBS_MUSIC WHERE bbsID < ? AND bbsAvailable = 1 ORDER BY bbsID DESC LIMIT 10";
+		ArrayList<Bbs_music> list = new ArrayList<Bbs_music>();
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1,  getNext() - (pageNumber - 1) * 10);
 			rs = pstmt.executeQuery();
 			while (rs.next()) {
-				Bbs bbs = new Bbs();
+				Bbs_music bbs = new Bbs_music();
 				bbs.setBbsID(rs.getInt(1));
 				bbs.setBbsTitle(rs.getString(2));
 				bbs.setUserID(rs.getString(3));
@@ -92,7 +92,7 @@ public class BbsDAO {
 	}
 	
 	public boolean nextPage(int pageNumber) {
-		String SQL = "SELECT * FROM BBS WHERE bbsID < ? AND bbsAvailable = 1";
+		String SQL = "SELECT * FROM BBS_MUSIC WHERE bbsID < ? AND bbsAvailable = 1";
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1,  getNext() - (pageNumber - 1) * 10);
@@ -106,14 +106,14 @@ public class BbsDAO {
 		return false; // 데이터베이스 오류
 	}
 	
-	public Bbs getBbs(int bbsID) {
-		String SQL = "SELECT * FROM BBS WHERE bbsID = ?";
+	public Bbs_music getBbs(int bbsID) {
+		String SQL = "SELECT * FROM BBS_MUSIC WHERE bbsID = ?";
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1, bbsID);
 			rs = pstmt.executeQuery();
 			if (rs.next()) {
-				Bbs bbs = new Bbs();
+				Bbs_music bbs = new Bbs_music();
 				bbs.setBbsID(rs.getInt(1));
 				bbs.setBbsTitle(rs.getString(2));
 				bbs.setUserID(rs.getString(3));
@@ -129,7 +129,7 @@ public class BbsDAO {
 	}
 	
 	public int update(int bbsID, String bbsTitle, String bbsContent) {
-		String SQL = "UPDATE BBS SET bbsTitle = ?, bbsContent = ? WHERE bbsID = ?";
+		String SQL = "UPDATE BBS_MUSIC SET bbsTitle = ?, bbsContent = ? WHERE bbsID = ?";
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			pstmt.setString(1,  bbsTitle);
@@ -143,7 +143,7 @@ public class BbsDAO {
 	}
 	
 	public int delete(int bbsID) {
-		String SQL = "UPDATE BBS SET bbsAvailable = 0 WHERE bbsID = ?";
+		String SQL = "UPDATE BBS_MUSIC SET bbsAvailable = 0 WHERE bbsID = ?";
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1, bbsID);
@@ -155,7 +155,7 @@ public class BbsDAO {
 	}
 	
 	public int getTotalCount() {
-	    String SQL = "SELECT COUNT(*) FROM BBS";
+	    String SQL = "SELECT COUNT(*) FROM BBS_MUSIC";
 	    try {
 	        PreparedStatement pstmt = conn.prepareStatement(SQL);
 	        ResultSet rs = pstmt.executeQuery();
