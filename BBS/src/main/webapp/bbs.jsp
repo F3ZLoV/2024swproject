@@ -84,36 +84,38 @@
     </nav>
     <div class="container">
         <div class="row">
-            <table class="table table-striped" style="text-align: center; border: 1px solid #dddddd">
-            <thead>
-                <tr>
-                    <th style="background-color: #eeeeee; text-align: center;">번호</th>
-                    <th style="background-color: #eeeeee; text-align: center;">제목</th>
-                    <th style="background-color: #eeeeee; text-align: center;">작성자</th>
-                    <th style="background-color: #eeeeee; text-align: center;">작성일 </th>
-                </tr>
-            </thead>
-            <tbody>
-                <%
-                    BbsDAO bbsDAO = new BbsDAO();
-                    ArrayList<Bbs> list = bbsDAO.getList(pageNumber);
-                    for(int i=0; i<list.size(); i++) {
-                %>
-                <tr>
-                    <td><%= list.get(i).getBbsID() %></td>
-                    <td><a href="view.jsp?bbsID=<%= list.get(i).getBbsID() %>"><%= list.get(i).getBbsTitle().replaceAll(" ", "&nbsp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br>") %></a></td> 
-                    <td><%= list.get(i).getUserID() %></td>
-                    <td><%= list.get(i).getBbsDate().substring(0, 11) + list.get(i).getBbsDate().substring(11, 13) + "시" + list.get(i).getBbsDate().substring(14, 16) + "분" %></td>
-                </tr>
-                <%
-                    }
-                %>
-                
-            </tbody>
-        </table>
+            <%
+			    BbsDAO bbsDAO = new BbsDAO();
+			    ArrayList<Bbs> list = bbsDAO.getList(pageNumber);
+			    int totalCount = bbsDAO.getTotalCount();  // 총 게시글 수 가져오기
+			    int rankNumber = totalCount - (pageNumber - 1) * 10;  // 게시글 번호 계산
+			%>
+			<table class="table table-striped" style="text-align: center; border: 1px solid #dddddd">
+			    <thead>
+			        <tr>
+			            <th style="background-color: #eeeeee; text-align: center;">번호</th>
+			            <th style="background-color: #eeeeee; text-align: center;">제목</th>
+			            <th style="background-color: #eeeeee; text-align: center;">작성자</th>
+			            <th style="background-color: #eeeeee; text-align: center;">작성일</th>
+			        </tr>
+			    </thead>
+			    <tbody>
+			        <%
+			            for (Bbs bbs : list) {
+			        %>
+			        <tr>
+			            <td><%= rankNumber-- %></td> <!-- 게시글 번호 출력 -->
+			            <td><a href="view.jsp?bbsID=<%= bbs.getBbsID() %>"><%= bbs.getBbsTitle().replaceAll(" ", "&nbsp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br>") %></a></td>
+			            <td><%= bbs.getUserID() %></td>
+			            <td><%= bbs.getBbsDate().substring(0, 11) + " " + bbs.getBbsDate().substring(11, 13) + "시" + bbs.getBbsDate().substring(14, 16) + "분" %></td>
+			        </tr>
+			        <%
+			            }
+			        %>
+			    </tbody>
+			</table>
 
         <%
-            int totalCount = bbsDAO.getTotalCount();  // 총 게시글 수 가져오기
             int pageSize = 10;  // 페이지당 게시글 수
             int totalPages = (int) Math.ceil((double) totalCount / pageSize);  // 총 페이지 수 계산
             int pageBlock = 5;  // 한 번에 표시할 페이지 번호 개수

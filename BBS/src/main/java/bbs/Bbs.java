@@ -8,7 +8,14 @@ public class Bbs {
 	private String bbsDate;
 	private String bbsContent;
 	private int bbsAvailable;
+	private int rankNumber;
 	
+	public int getRankNumber() {
+		return rankNumber;
+	}
+	public void setRankNumber(int rankNumber) {
+		this.rankNumber = rankNumber;
+	}
 	public int getBbsID() {
 		return bbsID;
 	}

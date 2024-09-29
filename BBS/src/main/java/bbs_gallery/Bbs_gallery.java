@@ -9,6 +9,14 @@ public class Bbs_gallery {
     private String bbsContent; // 게시글 내용
     private int bbsAvailable; // 게시글 사용 가능 여부 (1: 활성, 0: 삭제)
     private String bbsImage;
+    private int rankNumber;
+	
+	public int getRankNumber() {
+		return rankNumber;
+	}
+	public void setRankNumber(int rankNumber) {
+		this.rankNumber = rankNumber;
+	}
     
     public String getBbsImage() {
 		return bbsImage;

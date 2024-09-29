@@ -8,6 +8,14 @@ public class Bbs_market {
     private String bbsDate;   // 작성 날짜
     private String bbsContent; // 게시글 내용
     private int bbsAvailable; // 게시글 사용 가능 여부 (1: 활성, 0: 삭제)
+    private int rankNumber;
+	
+	public int getRankNumber() {
+		return rankNumber;
+	}
+	public void setRankNumber(int rankNumber) {
+		this.rankNumber = rankNumber;
+	}
 
     // 기본 생성자
     public Bbs_market() {}

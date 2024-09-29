@@ -52,7 +52,7 @@ public class BbsDAO {
 	}
 	
 	public int write(String bbsTitle, String userID, String bbsContent) {
-		String SQL = "INSERT INTO BBS VALUES (?, ?, ?, ?, ?, ?)";
+		String SQL = "INSERT INTO BBS (bbsID, bbsTitle, userID, bbsDate, bbsContent, bbsAvailable) VALUES (?, ?, ?, ?, ?, ?)";
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1,  getNext());
@@ -69,26 +69,28 @@ public class BbsDAO {
 	}
 	
 	public ArrayList<Bbs> getList(int pageNumber) {
-		String SQL = "SELECT * FROM BBS WHERE bbsID < ? AND bbsAvailable = 1 ORDER BY bbsID DESC LIMIT 10";
-		ArrayList<Bbs> list = new ArrayList<Bbs>();
-		try {
-			PreparedStatement pstmt = conn.prepareStatement(SQL);
-			pstmt.setInt(1,  getNext() - (pageNumber - 1) * 10);
-			rs = pstmt.executeQuery();
-			while (rs.next()) {
-				Bbs bbs = new Bbs();
-				bbs.setBbsID(rs.getInt(1));
-				bbs.setBbsTitle(rs.getString(2));
-				bbs.setUserID(rs.getString(3));
-				bbs.setBbsDate(rs.getString(4));
-				bbs.setBbsContent(rs.getString(5));
-				bbs.setBbsAvailable(rs.getInt(6));
-				list.add(bbs);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return list; // 데이터베이스 오류
+	    String SQL = "SELECT bbsID, bbsTitle, userID, bbsDate, bbsContent "
+	               + "FROM BBS WHERE bbsAvailable = 1 ORDER BY bbsID DESC LIMIT ?, 10";
+	    ArrayList<Bbs> list = new ArrayList<Bbs>();
+	    try {
+	        int totalCount = getTotalCount();	// 전체 게시글 수를 가져와서 계산
+	        PreparedStatement pstmt = conn.prepareStatement(SQL);
+	        pstmt.setInt(1, (pageNumber - 1) * 10);  // 페이징 처리
+	        rs = pstmt.executeQuery();
+	        while (rs.next()) {
+	            Bbs bbs = new Bbs();
+	            bbs.setRankNumber(totalCount--);
+	            bbs.setBbsID(rs.getInt("bbsID"));
+	            bbs.setBbsTitle(rs.getString("bbsTitle"));
+	            bbs.setUserID(rs.getString("userID"));
+	            bbs.setBbsDate(rs.getString("bbsDate"));
+	            bbs.setBbsContent(rs.getString("bbsContent"));
+	            list.add(bbs);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return list;
 	}
 	
 	public boolean nextPage(int pageNumber) {
@@ -155,7 +157,7 @@ public class BbsDAO {
 	}
 	
 	public int getTotalCount() {
-	    String SQL = "SELECT COUNT(*) FROM BBS";
+	    String SQL = "SELECT COUNT(*) FROM BBS WHERE bbsAvailable = 1";
 	    try {
 	        PreparedStatement pstmt = conn.prepareStatement(SQL);
 	        ResultSet rs = pstmt.executeQuery();

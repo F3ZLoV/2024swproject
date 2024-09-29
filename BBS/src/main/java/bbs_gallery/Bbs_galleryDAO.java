@@ -3,6 +3,8 @@ package bbs_gallery;
 import java.sql.*;
 import java.util.ArrayList;
 
+import bbs.Bbs;
+
 public class Bbs_galleryDAO {
     private Connection conn;  // DB 연결 객체
     private ResultSet rs;     // 결과셋 객체
@@ -71,27 +73,29 @@ public class Bbs_galleryDAO {
 
 
     public ArrayList<Bbs_gallery> getList(int pageNumber) {
-        String SQL = "SELECT * FROM BBS_GALLERY WHERE bbsID < ? AND bbsAvailable = 1 ORDER BY bbsID DESC LIMIT 10";
-        ArrayList<Bbs_gallery> list = new ArrayList<Bbs_gallery>();
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(SQL);
-            pstmt.setInt(1, getNext() - (pageNumber - 1) * 10); // 페이징 처리
-            rs = pstmt.executeQuery();
-            while (rs.next()) {
-                Bbs_gallery bbs = new Bbs_gallery();
-                bbs.setBbsID(rs.getInt(1));
-                bbs.setBbsTitle(rs.getString(2));
-                bbs.setUserID(rs.getString(3));
-                bbs.setBbsDate(rs.getString(4));
-                bbs.setBbsContent(rs.getString(5));
-                bbs.setBbsAvailable(rs.getInt(6));
-                list.add(bbs);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return list; // DB 오류
-    }
+	    String SQL = "SELECT bbsID, bbsTitle, userID, bbsDate, bbsContent "
+	               + "FROM BBS_GALLERY WHERE bbsAvailable = 1 ORDER BY bbsID DESC LIMIT ?, 10";
+	    ArrayList<Bbs_gallery> list = new ArrayList<Bbs_gallery>();
+	    try {
+	        int totalCount = getTotalCount();	// 전체 게시글 수를 가져와서 계산
+	        PreparedStatement pstmt = conn.prepareStatement(SQL);
+	        pstmt.setInt(1, (pageNumber - 1) * 10);  // 페이징 처리
+	        rs = pstmt.executeQuery();
+	        while (rs.next()) {
+	            Bbs_gallery bbs = new Bbs_gallery();
+	            bbs.setRankNumber(totalCount--);
+	            bbs.setBbsID(rs.getInt("bbsID"));
+	            bbs.setBbsTitle(rs.getString("bbsTitle"));
+	            bbs.setUserID(rs.getString("userID"));
+	            bbs.setBbsDate(rs.getString("bbsDate"));
+	            bbs.setBbsContent(rs.getString("bbsContent"));
+	            list.add(bbs);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return list;
+	}
 
 
     public boolean nextPage(int pageNumber) {
