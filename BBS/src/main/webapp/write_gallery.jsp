@@ -87,8 +87,7 @@
 		            </tr>
 		            <tr>
 		                <td>
-		                    <label for="image">이미지 업로드:</label>
-		                    <input type="file" name="image" id="image" class="form-control">
+		                    <input type="file" name="fileName">
 		                </td>
 		            </tr>
 		        </tbody>

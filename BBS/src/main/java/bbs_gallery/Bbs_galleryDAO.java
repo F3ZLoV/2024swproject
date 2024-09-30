@@ -53,22 +53,22 @@ public class Bbs_galleryDAO {
         return -1; // DB 오류
     }
 
-    public int write(String bbsTitle, String userID, String bbsContent, String bbsImage) {
-        String SQL = "INSERT INTO BBS_GALLERY (bbsID, bbsTitle, userID, bbsDate, bbsContent, bbsAvailable, bbsImage) VALUES (?, ?, ?, ?, ?, 1, ?)";
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(SQL);
-            pstmt.setInt(1, getNext());       // 다음 게시글 ID
-            pstmt.setString(2, bbsTitle);     // 게시글 제목
-            pstmt.setString(3, userID);       // 작성자 ID
-            pstmt.setString(4, getDate());    // 작성 날짜
-            pstmt.setString(5, bbsContent);   // 게시글 내용
-            pstmt.setString(6, bbsImage);     // 이미지 경로
-            return pstmt.executeUpdate();     // SQL 실행
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return -1; // DB 오류
-    }
+    public int write(String bbsTitle, String userID, String bbsContent) {
+		String SQL = "INSERT INTO BBS_GALLERY (bbsID, bbsTitle, userID, bbsDate, bbsContent, bbsAvailable) VALUES (?, ?, ?, ?, ?, ?)";
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1,  getNext());
+			pstmt.setString(2,  bbsTitle);
+			pstmt.setString(3,  userID);
+			pstmt.setString(4,  getDate());
+			pstmt.setString(5,  bbsContent);
+			pstmt.setInt(6, 1);
+			return getNext();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return -1; // 데이터베이스 오류
+	}
 
 
 

@@ -1,3 +1,4 @@
+<%@page import="java.io.File"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import="java.io.PrintWriter" %>
@@ -107,21 +108,25 @@
 					<tr>
 						<td>내용</td>
 						<td colspan="2" style="min-height: 200px; text-align: left;"><%= bbs.getBbsContent().replaceAll(" ", "&nbsp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br>") %></td>
-						<%
-						    int postId = Integer.parseInt(request.getParameter("id"));
-						    Bbs_galleryDAO dao = new Bbs_galleryDAO();
-						    Bbs_gallery post = dao.getBbs(postId);
+						<% 	
+							String real = "C:\\Users\\F3ZLoV\\git\\2024swproject\\BBS\\src\\main\\webapp\\images";
+							File viewFile = new File(real+"\\"+bbsID+"사진.jpg");
+							if(viewFile.exists()){
 						%>
-						<!-- 이미지가 있을 경우 출력 -->
-						<% if (post.getBbsImage() != null && !post.getBbsImage().isEmpty()) { %>
-						<td>
-							<img src="<%= post.getBbsImage() %>" alt="게시글 이미지" style="max-width: 100%; height: auto;">
-						</td>
-						<% } %>
-					</tr>
+						<tr>
+							<td colspan="6"><br><br><img src = "C:/Users/F3ZLoV/git/2024swproject/BBS/src/main/webapp/images/<%=bbsID %>사진.jpg" border="300px" width="300px" height="300px"><br><br>
+						<% 
+							} else {
+						%>
+						<td colspan="6"><br><br>
+						<%
+							} 
+						%>
+							<br><br></td>
+						</tr>
 				</tbody>
 			</table>
-			<a href="bbs.jsp" class="btn btn-primary">목록</a>
+			<a href="bbs_gallery.jsp" class="btn btn-primary">목록</a>
 			<%
 				if(userID != null && userID.equals(bbs.getUserID())) {
 			%>
