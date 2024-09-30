@@ -1,4 +1,3 @@
-<%@page import="java.io.File"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import="java.io.PrintWriter" %>
@@ -15,7 +14,7 @@
 </head>
 <body>
 	<%
-		String userID = null;
+	String userID = null;
 		if (session.getAttribute("userID") != null) {
 			userID = (String) session.getAttribute("userID");
 		}
@@ -108,22 +107,7 @@
 					<tr>
 						<td>내용</td>
 						<td colspan="2" style="min-height: 200px; text-align: left;"><%= bbs.getBbsContent().replaceAll(" ", "&nbsp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br>") %></td>
-						<% 	
-							String real = "C:\\Users\\F3ZLoV\\git\\2024swproject\\BBS\\src\\main\\webapp\\images";
-							File viewFile = new File(real+"\\"+bbsID+"사진.jpg");
-							if(viewFile.exists()){
-						%>
-						<tr>
-							<td colspan="6"><br><br><img src = "C:/Users/F3ZLoV/git/2024swproject/BBS/src/main/webapp/images/<%=bbsID %>사진.jpg" border="300px" width="300px" height="300px"><br><br>
-						<% 
-							} else {
-						%>
-						<td colspan="6"><br><br>
-						<%
-							} 
-						%>
-							<br><br></td>
-						</tr>
+					</tr>
 				</tbody>
 			</table>
 			<a href="bbs_gallery.jsp" class="btn btn-primary">목록</a>

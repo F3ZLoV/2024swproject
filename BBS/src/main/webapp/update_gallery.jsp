@@ -59,11 +59,11 @@
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
 				<li><a href="main.jsp">Home</a></li>
-				<li class="active"><a href="bbs.jsp">General</a></li>
+				<li><a href="bbs.jsp">General</a></li>
 				<li><a href="bbs_review.jsp">Review</a></li>
-				<li><a href="bbs_gallery.jsp">Gallery</a></li>
+				<li class="active"><a href="bbs_gallery.jsp">Gallery</a></li>
 				<li><a href="bbs_music.jsp">Musics</a></li>
-				<li><a href="bbs_market.jsp">Market</a></li>
+				<li><a href="bbs_market.jsp">market</a></li>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
 				<li class="dropdown">
@@ -79,11 +79,11 @@
 	</nav>
 	<div class="container">
 		<div class="row">
-		<form method="post" action="update_reviewAction.jsp?bbsID=<%= bbsID %>">
+		<form method="post" action="update_galleryAction.jsp?bbsID=<%= bbsID %>">
 		<table class="table table-striped" style="text-align: center; border: 1px solid #dddddd">
 			<thead>
 				<tr>
-					<th colspan="2" style="background-color: #eeeeee; text-align: center;">갤러리 글 수정</th>
+					<th colspan="2" style="background-color: #eeeeee; text-align: center;">장터 글 수정</th>
 				</tr>
 			</thead>
 			<tbody>

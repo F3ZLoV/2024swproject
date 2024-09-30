@@ -34,7 +34,7 @@ request.setCharacterEncoding("UTF-8");
 			PrintWriter script = response.getWriter();
 			script.println("<script>");
 			script.println("alert('유효하지 않은 글입니다.')");
-			script.println("location.href = 'bbs_review.jsp';");
+			script.println("location.href = 'bbs_gallery.jsp';");
 			script.println("</script>");
 		}
 		Bbs_gallery bbs = new Bbs_galleryDAO().getBbs(bbsID);
@@ -42,7 +42,7 @@ request.setCharacterEncoding("UTF-8");
 			PrintWriter script = response.getWriter();
 			script.println("<script>");
 			script.println("alert('권한이 없습니다.')");
-			script.println("location.href = 'bbs_review.jsp';");
+			script.println("location.href = 'bbs_gallery.jsp';");
 			script.println("</script>");
 		} else {
 			if(request.getParameter("bbsTitle") == null || request.getParameter("bbsContent") == null
@@ -64,7 +64,7 @@ request.setCharacterEncoding("UTF-8");
 			} else {
 				PrintWriter script = response.getWriter();
 				script.println("<script>");
-				script.println("location.href = 'bbs_review.jsp'");
+				script.println("location.href = 'bbs_gallery.jsp'");
 				script.println("</script>");
 			}
 		}

@@ -128,7 +128,6 @@ public class Bbs_galleryDAO {
                 bbs.setBbsDate(rs.getString(4));       // bbsDate
                 bbs.setBbsContent(rs.getString(5));    // bbsContent
                 bbs.setBbsAvailable(rs.getInt(6));     // bbsAvailable
-                bbs.setBbsImage(rs.getString(7));      // bbsImage - 추가
                 return bbs;
             }
         } catch (Exception e) {

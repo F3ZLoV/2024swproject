@@ -8,7 +8,6 @@ public class Bbs_gallery {
     private String bbsDate;   // 작성 날짜
     private String bbsContent; // 게시글 내용
     private int bbsAvailable; // 게시글 사용 가능 여부 (1: 활성, 0: 삭제)
-    private String bbsImage;
     private int rankNumber;
 	
 	public int getRankNumber() {
@@ -18,14 +17,6 @@ public class Bbs_gallery {
 		this.rankNumber = rankNumber;
 	}
     
-    public String getBbsImage() {
-		return bbsImage;
-	}
-
-	public void setBbsImage(String bbsImage) {
-		this.bbsImage = bbsImage;
-	}
-
 	// 기본 생성자
     public Bbs_gallery() {}
 
