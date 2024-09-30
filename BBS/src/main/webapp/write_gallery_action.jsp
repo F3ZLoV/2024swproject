@@ -26,7 +26,7 @@
 
         String bbsTitle = multi.getParameter("bbsTitle");
         String bbsContent = multi.getParameter("bbsContent");
-        String fileName = multi.getFilesystemName("imageFile");s
+        String fileName = multi.getFilesystemName("imageFile");
 
         if (bbsTitle == null || bbsContent == null || fileName == null) {
             PrintWriter script = response.getWriter();
