@@ -53,22 +53,23 @@ public class Bbs_galleryDAO {
         return -1; // DB 오류
     }
 
-    public int write(String bbsTitle, String userID, String bbsContent) {
-		String SQL = "INSERT INTO BBS_GALLERY (bbsID, bbsTitle, userID, bbsDate, bbsContent, bbsAvailable) VALUES (?, ?, ?, ?, ?, ?)";
-		try {
-			PreparedStatement pstmt = conn.prepareStatement(SQL);
-			pstmt.setInt(1,  getNext());
-			pstmt.setString(2,  bbsTitle);
-			pstmt.setString(3,  userID);
-			pstmt.setString(4,  getDate());
-			pstmt.setString(5,  bbsContent);
-			pstmt.setInt(6, 1);
-			return getNext();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return -1; // 데이터베이스 오류
-	}
+    public int write(String bbsTitle, String userID, String bbsContent, String imagePath) {
+        String SQL = "INSERT INTO BBS_GALLERY (bbsID, bbsTitle, userID, bbsDate, bbsContent, bbsAvailable, imagePath) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(SQL);
+            pstmt.setInt(1, getNext());
+            pstmt.setString(2, bbsTitle);
+            pstmt.setString(3, userID);
+            pstmt.setString(4, getDate());
+            pstmt.setString(5, bbsContent);
+            pstmt.setInt(6, 1);
+            pstmt.setString(7, imagePath);  // 이미지 경로 저장
+            return pstmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1; // 데이터베이스 오류
+    }
 
 
 
@@ -122,12 +123,13 @@ public class Bbs_galleryDAO {
             rs = pstmt.executeQuery();
             if (rs.next()) {
                 Bbs_gallery bbs = new Bbs_gallery();
-                bbs.setBbsID(rs.getInt(1));            // bbsID
-                bbs.setBbsTitle(rs.getString(2));      // bbsTitle
-                bbs.setUserID(rs.getString(3));        // userID
-                bbs.setBbsDate(rs.getString(4));       // bbsDate
-                bbs.setBbsContent(rs.getString(5));    // bbsContent
-                bbs.setBbsAvailable(rs.getInt(6));     // bbsAvailable
+                bbs.setBbsID(rs.getInt("bbsID"));
+                bbs.setBbsTitle(rs.getString("bbsTitle"));
+                bbs.setUserID(rs.getString("userID"));
+                bbs.setBbsDate(rs.getString("bbsDate"));
+                bbs.setBbsContent(rs.getString("bbsContent"));
+                bbs.setBbsAvailable(rs.getInt("bbsAvailable"));
+                bbs.setImagePath(rs.getString("imagePath")); // 이미지 경로 추가
                 return bbs;
             }
         } catch (Exception e) {
@@ -138,14 +140,15 @@ public class Bbs_galleryDAO {
 
 
 
-    public int update(int bbsID, String bbsTitle, String bbsContent) {
-        String SQL = "UPDATE BBS_GALLERY SET bbsTitle = ?, bbsContent = ? WHERE bbsID = ?";
+    public int update(int bbsID, String bbsTitle, String bbsContent, String imagePath) {
+        String SQL = "UPDATE BBS_GALLERY SET bbsTitle = ?, bbsContent = ?, imagePath = ? WHERE bbsID = ?";
         try {
             PreparedStatement pstmt = conn.prepareStatement(SQL);
             pstmt.setString(1, bbsTitle);
             pstmt.setString(2, bbsContent);
-            pstmt.setInt(3, bbsID);
-            return pstmt.executeUpdate(); // SQL 실행
+            pstmt.setString(3, imagePath);  // 이미지 경로 업데이트
+            pstmt.setInt(4, bbsID);
+            return pstmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }

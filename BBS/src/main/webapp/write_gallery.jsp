@@ -1,3 +1,4 @@
+<%@page import="bbs_gallery.Bbs_galleryDAO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import="java.io.PrintWriter" %>
@@ -33,9 +34,9 @@
 				<li><a href="main.jsp">Home</a></li>
 				<li><a href="bbs.jsp">General</a></li>
 				<li><a href="bbs_review.jsp">Review</a></li>
-				<li><a href="bbs_gallery.jsp">Gallery</a></li>
+				<li class="active"><a href="bbs_gallery.jsp">Gallery</a></li>
 				<li><a href="bbs_music.jsp">Musics</a></li>
-				<li class="active"><a href="bbs_gallery.jsp">gallery</a></li>
+				<li><a href="bbs_market.jsp">Market</a></li>
 			</ul>
 			<%
 				if(userID == null) {
@@ -71,23 +72,26 @@
 	</nav>
 	<div class="container">
 		<div class="row">
-		<form method="post" action="write_gallery_action.jsp">
-		<table class="table table-striped" style="text-align: center; border: 1px solid #dddddd">
-			<thead>
-				<tr>
-					<th colspan="2" style="background-color: #eeeeee; text-align: center;">장터 게시판</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td><input type="text" class="form-control" placeholder="글 제목" name="bbsTitle" maxlength="50"></td>
-				</tr>
-				<tr>
-					<td><textarea class="form-control" placeholder="글 내용" name="bbsContent" maxlength="2048" style="height: 350px"></textarea></td>
-				</tr>
-			</tbody>
-		</table>
-		<input type="submit" class="btn btn-primary pull-right" value="글쓰기">
+		<form method="post" action="write_gallery_action.jsp" enctype="multipart/form-data">
+			  <table class="table table-striped" style="text-align: center; border: 1px solid #dddddd">
+			    <thead>
+			      <tr>
+			        <th colspan="2" style="background-color: #eeeeee; text-align: center;">사진 게시판</th>
+			      </tr>
+			    </thead>
+			    <tbody>
+			      <tr>
+			        <td><input type="text" class="form-control" placeholder="글 제목" name="bbsTitle" maxlength="50" required></td>
+			      </tr>
+			      <tr>
+			        <td><textarea class="form-control" placeholder="글 내용" name="bbsContent" maxlength="2048" style="height: 350px" required></textarea></td>
+			      </tr>
+			      <tr>
+			        <td><input type="file" name="imageFile" class="form-control" accept="image/*" required></td>
+			      </tr>
+			    </tbody>
+			  </table>
+			  <input type="submit" class="btn btn-primary pull-right" value="글쓰기">
 		</form>
 		</div>
 	</div>

@@ -26,7 +26,7 @@
 			PrintWriter script = response.getWriter();
 			script.println("<script>");
 			script.println("alert('유효하지 않은 글입니다.')");
-			script.println("location.href = 'bbs.jsp';");
+			script.println("location.href = 'bbs_gallery.jsp';");
 			script.println("</script>");
 		}
 		Bbs_gallery bbs = new Bbs_galleryDAO().getBbs(bbsID);
@@ -107,6 +107,17 @@
 					<tr>
 						<td>내용</td>
 						<td colspan="2" style="min-height: 200px; text-align: left;"><%= bbs.getBbsContent().replaceAll(" ", "&nbsp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br>") %></td>
+					</tr>
+					<tr>
+						<th>이미지</th>
+						<td>
+							<% if(bbs.getImagePath() != null && !bbs.getImagePath().isEmpty()) { %>
+								<img src="<%=bbs.getImagePath() %>" alt="게시글 이미지">
+								<%=bbs.getImagePath() %>
+							<% } else { %>
+								<p>이미지가 존재하지 않습니다.</p>
+							<% } %>
+						</td>
 					</tr>
 				</tbody>
 			</table>
