@@ -108,12 +108,10 @@
 						<td>내용</td>
 						<td colspan="2" style="min-height: 200px; text-align: left;"><%= bbs.getBbsContent().replaceAll(" ", "&nbsp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br>") %></td>
 					</tr>
-					<tr>
-						<th>이미지</th>
+					<tr align="center">
 						<td>
 							<% if(bbs.getImagePath() != null && !bbs.getImagePath().isEmpty()) { %>
-								<img src="<%=bbs.getImagePath() %>" alt="게시글 이미지">
-								<%=bbs.getImagePath() %>
+								<img src="<%= request.getContextPath() %><%=bbs.getImagePath() %>" alt="게시글 이미지" width="550" height=auto>
 							<% } else { %>
 								<p>이미지가 존재하지 않습니다.</p>
 							<% } %>

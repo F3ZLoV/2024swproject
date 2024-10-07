@@ -79,11 +79,11 @@
 	</nav>
 	<div class="container">
 		<div class="row">
-		<form method="post" action="update_galleryAction.jsp?bbsID=<%= bbsID %>">
+		<form method="post" action="update_galleryAction.jsp?bbsID=<%= bbsID %>" enctype="multipart/form-data">
 		<table class="table table-striped" style="text-align: center; border: 1px solid #dddddd">
 			<thead>
 				<tr>
-					<th colspan="2" style="background-color: #eeeeee; text-align: center;">장터 글 수정</th>
+					<th colspan="2" style="background-color: #eeeeee; text-align: center;">갤러리 글 수정</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -93,6 +93,9 @@
 				<tr>
 					<td><textarea class="form-control" placeholder="글 내용" name="bbsContent" maxlength="2048" style="height: 350px"><%= bbs.getBbsContent() %></textarea></td>
 				</tr>
+				<tr>
+			        <td><input type="file" name="imageFile" class="form-control" accept="image/*" required></td>
+			    </tr>
 			</tbody>
 		</table>
 		<input type="submit" class="btn btn-primary pull-right" value="글수정">

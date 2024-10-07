@@ -127,7 +127,7 @@
             <ul class="pagination">
                 <% if (startPage > 1) { %>
                 <li>
-                    <a href="bbs.jsp?pageNumber=<%=startPage - 1%>" aria-label="Previous">
+                    <a href="bbs_gallery.jsp?pageNumber=<%=startPage - 1%>" aria-label="Previous">
                         <span aria-hidden="true">&laquo;</span>
                     </a>
                 </li>
@@ -135,13 +135,13 @@
                 
                 <% for (int i = startPage; i <= endPage; i++) { %>
                 <li class="<%= (i == pageNumber) ? "active" : "" %>">
-                    <a href="bbs.jsp?pageNumber=<%=i%>"><%=i%></a>
+                    <a href="bbs_gallery.jsp?pageNumber=<%=i%>"><%=i%></a>
                 </li>
                 <% } %>
                 
                 <% if (endPage < totalPages) { %>
                 <li>
-                    <a href="bbs.jsp?pageNumber=<%=endPage + 1%>" aria-label="Next">
+                    <a href="bbs_gallery.jsp?pageNumber=<%=endPage + 1%>" aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>
                     </a>
                 </li>

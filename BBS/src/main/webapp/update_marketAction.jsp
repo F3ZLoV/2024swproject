@@ -52,22 +52,22 @@ request.setCharacterEncoding("UTF-8");
 			script.println("alert('입력이 안 된 사항이 있습니다.');");
 			script.println("history.back()");
 			script.println("</script>");
-		} else {
-			Bbs_marketDAO bbsDAO = new Bbs_marketDAO();
-			int result = bbsDAO.update(bbsID, request.getParameter("bbsTitle"), request.getParameter("bbsContent"));
-			if(result == -1) {
-				PrintWriter script = response.getWriter();
-				script.println("<script>");
-				script.println("alert('글 수정에 실패했습니다.');");
-				script.println("history.back()");
-				script.println("</script>");
 			} else {
-				PrintWriter script = response.getWriter();
-				script.println("<script>");
-				script.println("location.href = 'bbs_market.jsp'");
-				script.println("</script>");
+				Bbs_marketDAO bbsDAO = new Bbs_marketDAO();
+				int result = bbsDAO.update(bbsID, request.getParameter("bbsTitle"), request.getParameter("bbsContent"));
+				if(result == -1) {
+					PrintWriter script = response.getWriter();
+					script.println("<script>");
+					script.println("alert('글 수정에 실패했습니다.');");
+					script.println("history.back()");
+					script.println("</script>");
+				} else {
+					PrintWriter script = response.getWriter();
+					script.println("<script>");
+					script.println("location.href = 'bbs_market.jsp'");
+					script.println("</script>");
+				}
 			}
-		}
 		}
 	%>
 </body>

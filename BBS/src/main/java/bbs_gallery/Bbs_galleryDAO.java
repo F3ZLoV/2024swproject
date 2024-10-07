@@ -54,7 +54,8 @@ public class Bbs_galleryDAO {
     }
 
     public int write(String bbsTitle, String userID, String bbsContent, String imagePath) {
-        String SQL = "INSERT INTO BBS_GALLERY (bbsID, bbsTitle, userID, bbsDate, bbsContent, bbsAvailable, imagePath) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String SQL = "INSERT INTO BBS_GALLERY (bbsID, bbsTitle, userID, bbsDate, bbsContent, bbsAvailable, imagePath)"
+        			+ " VALUES (?, ?, ?, ?, ?, ?, ?)";
         try {
             PreparedStatement pstmt = conn.prepareStatement(SQL);
             pstmt.setInt(1, getNext());
