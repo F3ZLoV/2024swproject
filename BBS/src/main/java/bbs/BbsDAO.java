@@ -51,8 +51,8 @@ public class BbsDAO {
 		return -1; // 데이터베이스 오류
 	}
 	
-	public int write(String bbsTitle, String userID, String bbsContent) {
-		String SQL = "INSERT INTO BBS (bbsID, bbsTitle, userID, bbsDate, bbsContent, bbsAvailable) VALUES (?, ?, ?, ?, ?, ?)";
+	public int write(String bbsTitle, String userID, String bbsContent, int bbsCount, int likeCount) {
+		String SQL = "INSERT INTO BBS VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1,  getNext());
@@ -61,6 +61,8 @@ public class BbsDAO {
 			pstmt.setString(4,  getDate());
 			pstmt.setString(5,  bbsContent);
 			pstmt.setInt(6, 1);
+			pstmt.setInt(7, bbsCount);
+			pstmt.setInt(8, likeCount);
 			return pstmt.executeUpdate();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -69,7 +71,7 @@ public class BbsDAO {
 	}
 	
 	public ArrayList<Bbs> getList(int pageNumber) {
-	    String SQL = "SELECT bbsID, bbsTitle, userID, bbsDate, bbsContent "
+	    String SQL = "SELECT * "
 	               + "FROM BBS WHERE bbsAvailable = 1 ORDER BY bbsID DESC LIMIT ?, 10";
 	    ArrayList<Bbs> list = new ArrayList<Bbs>();
 	    try {
@@ -80,11 +82,14 @@ public class BbsDAO {
 	        while (rs.next()) {
 	            Bbs bbs = new Bbs();
 	            bbs.setRankNumber(totalCount--);
-	            bbs.setBbsID(rs.getInt("bbsID"));
-	            bbs.setBbsTitle(rs.getString("bbsTitle"));
-	            bbs.setUserID(rs.getString("userID"));
-	            bbs.setBbsDate(rs.getString("bbsDate"));
-	            bbs.setBbsContent(rs.getString("bbsContent"));
+	            bbs.setBbsID(rs.getInt(1));
+	            bbs.setBbsTitle(rs.getString(2));
+	            bbs.setUserID(rs.getString(3));
+	            bbs.setBbsDate(rs.getString(4));
+	            bbs.setBbsContent(rs.getString(5));
+	            bbs.setBbsAvailable(rs.getInt(6));
+	            bbs.setBbsCount(rs.getInt(7));
+	            bbs.setLikeCount(rs.getInt(8));
 	            list.add(bbs);
 	        }
 	    } catch (Exception e) {
@@ -126,6 +131,7 @@ public class BbsDAO {
 				bbs.setBbsCount(bbsCount);
 				bbsCount++;
 				countUpdate(bbsCount, bbsID);
+				bbs.setLikeCount(rs.getInt(8));
 				return bbs;
 			}
 		} catch (Exception e) {
