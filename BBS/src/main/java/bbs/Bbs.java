@@ -9,7 +9,21 @@ public class Bbs {
 	private String bbsContent;
 	private int bbsAvailable;
 	private int rankNumber;
+	private int bbsCount;
+	private int likeCount;
 	
+	public int getLikeCount() {
+		return likeCount;
+	}
+	public void setLikeCount(int likeCount) {
+		this.likeCount = likeCount;
+	}
+	public int getBbsCount() {
+		return bbsCount;
+	}
+	public void setBbsCount(int bbsCount) {
+		this.bbsCount = bbsCount;
+	}
 	public int getRankNumber() {
 		return rankNumber;
 	}

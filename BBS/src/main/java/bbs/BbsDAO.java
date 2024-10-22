@@ -122,6 +122,10 @@ public class BbsDAO {
 				bbs.setBbsDate(rs.getString(4));
 				bbs.setBbsContent(rs.getString(5));
 				bbs.setBbsAvailable(rs.getInt(6));
+				int bbsCount=rs.getInt(7);
+				bbs.setBbsCount(bbsCount);
+				bbsCount++;
+				countUpdate(bbsCount, bbsID);
 				return bbs;
 			}
 		} catch (Exception e) {
@@ -170,4 +174,28 @@ public class BbsDAO {
 	    return -1;  // 오류 발생 시
 	}
 
+	public int countUpdate(int bbsCount, int bbsID) {
+		String SQL = "update bbs set bbsCount = ? where bbsID = ?";
+		try {
+			PreparedStatement pstmt=conn.prepareStatement(SQL);
+			pstmt.setInt(1, bbsCount);//물음표의 순서
+			pstmt.setInt(2, bbsID);
+			return pstmt.executeUpdate();//insert,delete,update			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return -1;//데이터베이스 오류
+	}
+	
+	public int like(int bbsID) {
+		String SQL = "update bbs set likeCount = likeCount + 1 where bbsID = ?";
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1, bbsID);
+			return pstmt.executeUpdate();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
 }

@@ -97,6 +97,8 @@
 			            <th style="background-color: #eeeeee; text-align: center;">제목</th>
 			            <th style="background-color: #eeeeee; text-align: center;">작성자</th>
 			            <th style="background-color: #eeeeee; text-align: center;">작성일</th>
+			            <th style="background-color: #eeeeee; text-align: center;">조회수</th>
+			            <th style="background-color: #eeeeee; text-align: center;">추천수</th>
 			        </tr>
 			    </thead>
 			    <tbody>
@@ -108,6 +110,8 @@
 			            <td><a href="view.jsp?bbsID=<%= bbs.getBbsID() %>"><%= bbs.getBbsTitle().replaceAll(" ", "&nbsp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br>") %></a></td>
 			            <td><%= bbs.getUserID() %></td>
 			            <td><%= bbs.getBbsDate().substring(0, 11) + " " + bbs.getBbsDate().substring(11, 13) + "시" + bbs.getBbsDate().substring(14, 16) + "분" %></td>
+			            <td><%= bbs.getBbsCount() %></td>
+			            <td><%= bbs.getLikeCount() %></td>
 			        </tr>
 			        <%
 			            }
