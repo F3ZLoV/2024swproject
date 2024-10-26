@@ -9,7 +9,21 @@ public class Bbs_market {
     private String bbsContent; // 게시글 내용
     private int bbsAvailable; // 게시글 사용 가능 여부 (1: 활성, 0: 삭제)
     private int rankNumber;
+    private int bbsCount;
+	private int likeCount;
 	
+	public int getBbsCount() {
+		return bbsCount;
+	}
+	public void setBbsCount(int bbsCount) {
+		this.bbsCount = bbsCount;
+	}
+	public int getLikeCount() {
+		return likeCount;
+	}
+	public void setLikeCount(int likeCount) {
+		this.likeCount = likeCount;
+	}
 	public int getRankNumber() {
 		return rankNumber;
 	}

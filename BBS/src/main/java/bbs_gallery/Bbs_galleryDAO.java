@@ -12,7 +12,7 @@ public class Bbs_galleryDAO {
     // 생성자: DB 연결 설정
     public Bbs_galleryDAO() {
         try {
-            String dbURL = "jdbc:mysql://localhost:3306/BBS?useSSL=false"; // DB URL
+            String dbURL = "jdbc:mysql://localhost:3306/BBS?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false"; // DB URL
             String dbID = "root";    // DB ID
             String dbPassword = "root"; // DB Password
             Class.forName("com.mysql.jdbc.Driver");
@@ -53,9 +53,8 @@ public class Bbs_galleryDAO {
         return -1; // DB 오류
     }
 
-    public int write(String bbsTitle, String userID, String bbsContent, String imagePath) {
-        String SQL = "INSERT INTO BBS_GALLERY (bbsID, bbsTitle, userID, bbsDate, bbsContent, bbsAvailable, imagePath)"
-        			+ " VALUES (?, ?, ?, ?, ?, ?, ?)";
+    public int write(String bbsTitle, String userID, String bbsContent, String imagePath, int bbsCount, int likeCount) {
+        String SQL = "INSERT INTO BBS_GALLERY VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try {
             PreparedStatement pstmt = conn.prepareStatement(SQL);
             pstmt.setInt(1, getNext());
@@ -65,6 +64,8 @@ public class Bbs_galleryDAO {
             pstmt.setString(5, bbsContent);
             pstmt.setInt(6, 1);
             pstmt.setString(7, imagePath);  // 이미지 경로 저장
+            pstmt.setInt(8, bbsCount);
+			pstmt.setInt(9, likeCount);
             return pstmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -75,7 +76,7 @@ public class Bbs_galleryDAO {
 
 
     public ArrayList<Bbs_gallery> getList(int pageNumber) {
-	    String SQL = "SELECT bbsID, bbsTitle, userID, bbsDate, bbsContent "
+	    String SQL = "SELECT * "
 	               + "FROM BBS_GALLERY WHERE bbsAvailable = 1 ORDER BY bbsID DESC LIMIT ?, 10";
 	    ArrayList<Bbs_gallery> list = new ArrayList<Bbs_gallery>();
 	    try {
@@ -86,12 +87,17 @@ public class Bbs_galleryDAO {
 	        while (rs.next()) {
 	            Bbs_gallery bbs = new Bbs_gallery();
 	            bbs.setRankNumber(totalCount--);
-	            bbs.setBbsID(rs.getInt("bbsID"));
-	            bbs.setBbsTitle(rs.getString("bbsTitle"));
-	            bbs.setUserID(rs.getString("userID"));
-	            bbs.setBbsDate(rs.getString("bbsDate"));
-	            bbs.setBbsContent(rs.getString("bbsContent"));
+	            bbs.setBbsID(rs.getInt(1));
+	            bbs.setBbsTitle(rs.getString(2));
+	            bbs.setUserID(rs.getString(3));
+	            bbs.setBbsDate(rs.getString(4));
+	            bbs.setBbsContent(rs.getString(5));
+	            bbs.setBbsAvailable(rs.getInt(6));
+	            bbs.setImagePath(rs.getString(7));
+	            bbs.setBbsCount(rs.getInt(8));
+	            bbs.setLikeCount(rs.getInt(9));
 	            list.add(bbs);
+	           
 	        }
 	    } catch (Exception e) {
 	        e.printStackTrace();
@@ -131,7 +137,12 @@ public class Bbs_galleryDAO {
                 bbs.setBbsContent(rs.getString("bbsContent"));
                 bbs.setBbsAvailable(rs.getInt("bbsAvailable"));
                 bbs.setImagePath(rs.getString("imagePath")); // 이미지 경로 추가
-                return bbs;
+                int bbsCount=rs.getInt("bbsCount");
+				bbs.setBbsCount(bbsCount);
+				bbsCount++;
+				countUpdate(bbsCount, bbsID);
+				bbs.setLikeCount(rs.getInt("likeCount"));
+				return bbs;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -181,5 +192,30 @@ public class Bbs_galleryDAO {
 	        e.printStackTrace();
 	    }
 	    return -1;  // 오류 발생 시
+	}
+    
+    public int countUpdate(int bbsCount, int bbsID) {
+		String SQL = "update bbs_gallery set bbsCount = ? where bbsID = ?";
+		try {
+			PreparedStatement pstmt=conn.prepareStatement(SQL);
+			pstmt.setInt(1, bbsCount);
+			pstmt.setInt(2, bbsID);
+			return pstmt.executeUpdate();//insert,delete,update			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return -1;//데이터베이스 오류
+	}
+	
+	public int like(int bbsID) {
+		String SQL = "update bbs_gallery set likeCount = likeCount + 1 where bbsID = ?";
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1, bbsID);
+			return pstmt.executeUpdate();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return -1;
 	}
 }

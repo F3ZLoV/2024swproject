@@ -53,8 +53,8 @@ public class Bbs_musicDAO {
 		return -1; // 데이터베이스 오류
 	}
 	
-	public int write(String bbsTitle, String userID, String bbsContent) {
-		String SQL = "INSERT INTO BBS_MUSIC VALUES (?, ?, ?, ?, ?, ?)";
+	public int write(String bbsTitle, String userID, String bbsContent, int bbsCount, int likeCount) {
+		String SQL = "INSERT INTO BBS_MUSIC VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1,  getNext());
@@ -63,6 +63,8 @@ public class Bbs_musicDAO {
 			pstmt.setString(4,  getDate());
 			pstmt.setString(5,  bbsContent);
 			pstmt.setInt(6, 1);
+			pstmt.setInt(7, bbsCount);
+			pstmt.setInt(8, likeCount);
 			return pstmt.executeUpdate();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -71,7 +73,7 @@ public class Bbs_musicDAO {
 	}
 	
 	public ArrayList<Bbs_music> getList(int pageNumber) {
-	    String SQL = "SELECT bbsID, bbsTitle, userID, bbsDate, bbsContent "
+		String SQL = "SELECT * "
 	               + "FROM BBS_MUSIC WHERE bbsAvailable = 1 ORDER BY bbsID DESC LIMIT ?, 10";
 	    ArrayList<Bbs_music> list = new ArrayList<Bbs_music>();
 	    try {
@@ -82,11 +84,14 @@ public class Bbs_musicDAO {
 	        while (rs.next()) {
 	            Bbs_music bbs = new Bbs_music();
 	            bbs.setRankNumber(totalCount--);
-	            bbs.setBbsID(rs.getInt("bbsID"));
-	            bbs.setBbsTitle(rs.getString("bbsTitle"));
-	            bbs.setUserID(rs.getString("userID"));
-	            bbs.setBbsDate(rs.getString("bbsDate"));
-	            bbs.setBbsContent(rs.getString("bbsContent"));
+	            bbs.setBbsID(rs.getInt(1));
+	            bbs.setBbsTitle(rs.getString(2));
+	            bbs.setUserID(rs.getString(3));
+	            bbs.setBbsDate(rs.getString(4));
+	            bbs.setBbsContent(rs.getString(5));
+	            bbs.setBbsAvailable(rs.getInt(6));
+	            bbs.setBbsCount(rs.getInt(7));
+	            bbs.setLikeCount(rs.getInt(8));
 	            list.add(bbs);
 	        }
 	    } catch (Exception e) {
@@ -170,6 +175,31 @@ public class Bbs_musicDAO {
 	        e.printStackTrace();
 	    }
 	    return -1;  // 오류 발생 시
+	}
+	
+	public int countUpdate(int bbsCount, int bbsID) {
+		String SQL = "update bbs_music set bbsCount = ? where bbsID = ?";
+		try {
+			PreparedStatement pstmt=conn.prepareStatement(SQL);
+			pstmt.setInt(1, bbsCount);
+			pstmt.setInt(2, bbsID);
+			return pstmt.executeUpdate();//insert,delete,update			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return -1;//데이터베이스 오류
+	}
+	
+	public int like(int bbsID) {
+		String SQL = "update bbs_music set likeCount = likeCount + 1 where bbsID = ?";
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1, bbsID);
+			return pstmt.executeUpdate();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return -1;
 	}
 
 }

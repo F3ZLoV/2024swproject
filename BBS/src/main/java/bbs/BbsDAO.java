@@ -184,7 +184,7 @@ public class BbsDAO {
 		String SQL = "update bbs set bbsCount = ? where bbsID = ?";
 		try {
 			PreparedStatement pstmt=conn.prepareStatement(SQL);
-			pstmt.setInt(1, bbsCount);//물음표의 순서
+			pstmt.setInt(1, bbsCount);
 			pstmt.setInt(2, bbsID);
 			return pstmt.executeUpdate();//insert,delete,update			
 		} catch(Exception e) {
@@ -204,4 +204,38 @@ public class BbsDAO {
 		}
 		return -1;
 	}
+	
+	public ArrayList<Bbs> getSearch(String searchField, String searchText){
+		ArrayList<Bbs> list = new ArrayList<Bbs>();
+	    String SQL = "SELECT * FROM bbs WHERE " + searchField + " LIKE ? "
+	               + "UNION SELECT * FROM bbs_gallery WHERE " + searchField + " LIKE ? "
+	               + "UNION SELECT * FROM bbs_market WHERE " + searchField + " LIKE ? "
+	               + "UNION SELECT * FROM bbs_music WHERE " + searchField + " LIKE ? "
+	               + "UNION SELECT * FROM bbs_review WHERE " + searchField + " LIKE ? "
+	               + "ORDER BY bbsID DESC LIMIT 10";
+
+	    try {
+	        PreparedStatement pstmt = conn.prepareStatement(SQL);
+	        for (int i = 1; i <= 5; i++) {  // 동일한 검색어를 모든 테이블에 적용
+	            pstmt.setString(i, "%" + searchText.trim() + "%");
+	        }
+				rs=pstmt.executeQuery();//select
+	         while(rs.next()) {
+	            Bbs bbs = new Bbs();
+	            bbs.setBbsID(rs.getInt(1));
+	            bbs.setBbsTitle(rs.getString(2));
+	            bbs.setUserID(rs.getString(3));
+	            bbs.setBbsDate(rs.getString(4));
+	            bbs.setBbsContent(rs.getString(5));
+	            bbs.setBbsAvailable(rs.getInt(6));
+	            bbs.setBbsCount(rs.getInt(7));
+	            bbs.setLikeCount(rs.getInt(8));
+	            list.add(bbs);//list에 해당 인스턴스를 담는다.
+	         }         
+	      } catch(Exception e) {
+	         e.printStackTrace();
+	      }
+	      return list;//ㄱㅔ시글 리스트 반환
+	   }
+	
 }

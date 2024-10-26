@@ -108,6 +108,14 @@
 						<td>내용</td>
 						<td colspan="2" style="min-height: 200px; text-align: left;"><%= bbs.getBbsContent().replaceAll(" ", "&nbsp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br>") %></td>
 					</tr>
+					<tr>
+						<td>조회수</td>
+						<td colspan="2"><%=bbs.getBbsCount() + 1 %></td>
+					</tr>
+					<tr>
+						<td>추천수</td>
+						<td colspan="2">+<%=bbs.getLikeCount() %></td>
+					</tr>
 					<tr align="center">
 						<td>
 							<% if(bbs.getImagePath() != null && !bbs.getImagePath().isEmpty()) { %>
@@ -120,6 +128,8 @@
 				</tbody>
 			</table>
 			<a href="bbs_gallery.jsp" class="btn btn-primary">목록</a>
+			<a onclick="return confirm('추천하시겠습니까?')" href="likegalleryAction.jsp?bbsID=<%=bbsID %>"
+				 class="btn btn-success pull-right">👍</a>
 			<%
 				if(userID != null && userID.equals(bbs.getUserID())) {
 			%>

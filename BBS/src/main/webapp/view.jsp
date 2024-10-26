@@ -114,12 +114,13 @@
 					</tr>
 					<tr>
 						<td>추천수</td>
-						<td colspan="2"><%=bbs.getLikeCount() %></td>
+						<td colspan="2">+<%=bbs.getLikeCount() %></td>
 					</tr>
 				</tbody>
 			</table>
 			<a href="bbs.jsp" class="btn btn-primary">목록</a>
-			<a onclick="return confirm('추천하시겠습니까?')" href="likeAction.jsp?bbsID=<%=bbsID %>" class="btn btn-success pull-right">b</a>
+			<a onclick="return confirm('추천하시겠습니까?')" href="likeAction.jsp?bbsID=<%=bbsID %>"
+				 class="btn btn-success pull-right">👍</a>
 			<%
 				if(userID != null && userID.equals(bbs.getUserID())) {
 			%>

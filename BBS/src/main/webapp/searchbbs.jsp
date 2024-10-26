@@ -25,6 +25,15 @@
         if (session.getAttribute("userID") != null) {
             userID = (String) session.getAttribute("userID");
         }
+        if (request.getParameter("searchField") == "0" || request.getParameter("searchText") == null
+				|| request.getParameter("searchField").equals("0")
+				|| request.getParameter("searchText").equals("")) {
+			PrintWriter script = response.getWriter();
+			script.println("<script>");
+			script.println("alert('입력이 안 된 사항이 있습니다.')");
+			script.println("history.back()");
+			script.println("</script>");
+		}
         int pageNumber = 1;
         if (request.getParameter("pageNumber") != null) {
             pageNumber = Integer.parseInt(request.getParameter("pageNumber"));
@@ -50,6 +59,21 @@
                 <li><a href="bbs_music.jsp">Musics</a></li>
                 <li><a href="bbs_market.jsp">Market</a></li>
             </ul>
+            <div class="navbar-form navbar-left">
+                    <form method="post" name="search" action="searchbbs.jsp" class="form-inline">
+                        <div class="form-group">
+                            <select class="form-control" name="searchField">
+                                <option value="0">선택</option>
+                                <option value="bbsTitle">제목</option>
+                                <option value="userID">작성자</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="검색어 입력" name="searchText" maxlength="100">
+                        </div>
+                        <button type="submit" class="btn btn-success">검색</button>
+                    </form>
+                </div>
             <%
                 if(userID == null) {
             %>
@@ -85,10 +109,8 @@
     <div class="container">
         <div class="row">
             <%
-			    BbsDAO bbsDAO = new BbsDAO();
-			    ArrayList<Bbs> list = bbsDAO.getList(pageNumber);
-			    int totalCount = bbsDAO.getTotalCount();  // 총 게시글 수 가져오기
-			    int rankNumber = totalCount - (pageNumber - 1) * 10;  // 게시글 번호 계산
+			    
+			    
 			%>
 			<table class="table table-striped" style="text-align: center; border: 1px solid #dddddd">
 			    <thead>
@@ -103,19 +125,34 @@
 			    </thead>
 			    <tbody>
 			        <%
-			            for (Bbs bbs : list) {
-			        %>
-			        <tr>
-			            <td><%= rankNumber-- %></td> <!-- 게시글 번호 출력 -->
-			            <td><a href="view.jsp?bbsID=<%= bbs.getBbsID() %>"><%= bbs.getBbsTitle().replaceAll(" ", "&nbsp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br>") %></a></td>
-			            <td><%= bbs.getUserID() %></td>
-			            <td><%= bbs.getBbsDate().substring(0, 11) + " " + bbs.getBbsDate().substring(11, 13) + "시" + bbs.getBbsDate().substring(14, 16) + "분" %></td>
-			            <td><%= bbs.getBbsCount() %></td>
-			            <td>+<%= bbs.getLikeCount() %></td>
-			        </tr>
-			        <%
-			            }
-			        %>
+						BbsDAO bbsDAO = new BbsDAO();
+						ArrayList<Bbs> list = bbsDAO.getSearch(request.getParameter("searchField"),
+								request.getParameter("searchText"));
+						int totalCount = bbsDAO.getTotalCount();  // 총 게시글 수 가져오기
+					    int rankNumber = totalCount - (pageNumber - 1) * 10;  // 게시글 번호 계산
+						if (list.size() == 0) {
+							PrintWriter script = response.getWriter();
+							script.println("<script>");
+							script.println("alert('검색결과가 없습니다.')");
+							script.println("history.back()");
+							script.println("</script>");
+						}
+						for (int i = 0; i < list.size(); i++) {
+					%>
+					<tr>
+						<td><%=list.get(i).getBbsID()%></td>
+						<%--현재 게시글에 대한 정보 --%>
+						<td><a href="view.jsp?bbsID=<%=list.get(i).getBbsID()%>"><%=list.get(i).getBbsTitle().replaceAll(" ", "&nbsp;").replaceAll("<", "&lt;")
+						.replaceAll(">", "&gt;").replaceAll("\n", "<br>")%></a></td>
+						<td><%=list.get(i).getUserID()%></td>
+						<td><%=list.get(i).getBbsDate().substring(0, 11) + list.get(i).getBbsDate().substring(11, 13) + "시"
+						+ list.get(i).getBbsDate().substring(14, 16) + "분"%></td>
+						<td><%=list.get(i).getBbsCount()%></td>
+						<td><%=list.get(i).getLikeCount()%></td>
+					</tr>
+					<%
+						}
+					%>
 			    </tbody>
 			</table>
 
@@ -155,8 +192,6 @@
                 <% } %>
             </ul>
         </nav>
-
-        <a href="write.jsp" class="btn btn-primary pull-right">글쓰기</a>
         </div>
     </div>
     <!-- FOOTER -->

@@ -26,7 +26,7 @@
 			PrintWriter script = response.getWriter();
 			script.println("<script>");
 			script.println("alert('유효하지 않은 글입니다.')");
-			script.println("location.href = 'bbs.jsp';");
+			script.println("location.href = 'bbs_market.jsp';");
 			script.println("</script>");
 		}
 		Bbs_market bbs = new Bbs_marketDAO().getBbs(bbsID);
@@ -108,9 +108,19 @@
 						<td>내용</td>
 						<td colspan="2" style="min-height: 200px; text-align: left;"><%= bbs.getBbsContent().replaceAll(" ", "&nbsp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br>") %></td>
 					</tr>
+					<tr>
+						<td>조회수</td>
+						<td colspan="2"><%=bbs.getBbsCount() + 1 %></td>
+					</tr>
+					<tr>
+						<td>추천수</td>
+						<td colspan="2">+<%=bbs.getLikeCount() %></td>
+					</tr>
 				</tbody>
 			</table>
 			<a href="bbs_market.jsp" class="btn btn-primary">목록</a>
+			<a onclick="return confirm('추천하시겠습니까?')" href="likemarketAction.jsp?bbsID=<%=bbsID %>"
+				 class="btn btn-success pull-right">👍</a>
 			<%
 				if(userID != null && userID.equals(bbs.getUserID())) {
 			%>

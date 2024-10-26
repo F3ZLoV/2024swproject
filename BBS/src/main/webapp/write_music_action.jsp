@@ -35,7 +35,7 @@ request.setCharacterEncoding("UTF-8");
 			script.println("</script>");
 		} else {
 			Bbs_musicDAO bbsDAO = new Bbs_musicDAO();
-			int result = bbsDAO.write(bbs_music.getBbsTitle(), userID, bbs_music.getBbsContent());
+			int result = bbsDAO.write(bbs_music.getBbsTitle(), userID, bbs_music.getBbsContent(), bbs_music.getBbsCount(), bbs_music.getLikeCount());
 			if(result == -1) {
 				PrintWriter script = response.getWriter();
 				script.println("<script>");

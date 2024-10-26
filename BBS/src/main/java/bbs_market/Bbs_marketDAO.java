@@ -12,7 +12,7 @@ public class Bbs_marketDAO {
     // 생성자: DB 연결 설정
     public Bbs_marketDAO() {
         try {
-            String dbURL = "jdbc:mysql://localhost:3306/BBS?useSSL=false"; // DB URL
+            String dbURL = "jdbc:mysql://localhost:3306/BBS?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false"; // DB URL
             String dbID = "root";    // DB ID
             String dbPassword = "root"; // DB Password
             Class.forName("com.mysql.jdbc.Driver");
@@ -54,25 +54,28 @@ public class Bbs_marketDAO {
     }
 
     // 리뷰 작성 메서드
-    public int write(String bbsTitle, String userID, String bbsContent) {
-        String SQL = "INSERT INTO BBS_MARKET (bbsID, bbsTitle, userID, bbsDate, bbsContent, bbsAvailable) VALUES (?, ?, ?, ?, ?, 1)";
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(SQL);
-            pstmt.setInt(1, getNext());       // 다음 게시글 ID
-            pstmt.setString(2, bbsTitle);     // 게시글 제목
-            pstmt.setString(3, userID);       // 작성자 ID
-            pstmt.setString(4, getDate());    // 작성 날짜
-            pstmt.setString(5, bbsContent);   // 게시글 내용
-            return pstmt.executeUpdate();     // SQL 실행
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return -1; // DB 오류
-    }
+    public int write(String bbsTitle, String userID, String bbsContent, int bbsCount, int likeCount) {
+		String SQL = "INSERT INTO BBS_MARKET VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1,  getNext());
+			pstmt.setString(2,  bbsTitle);
+			pstmt.setString(3,  userID);
+			pstmt.setString(4,  getDate());
+			pstmt.setString(5,  bbsContent);
+			pstmt.setInt(6, 1);
+			pstmt.setInt(7, bbsCount);
+			pstmt.setInt(8, likeCount);
+			return pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return -1; // 데이터베이스 오류
+	}
 
     // 리뷰 목록 가져오기
     public ArrayList<Bbs_market> getList(int pageNumber) {
-	    String SQL = "SELECT bbsID, bbsTitle, userID, bbsDate, bbsContent "
+	    String SQL = "SELECT * "
 	               + "FROM BBS_MARKET WHERE bbsAvailable = 1 ORDER BY bbsID DESC LIMIT ?, 10";
 	    ArrayList<Bbs_market> list = new ArrayList<Bbs_market>();
 	    try {
@@ -83,11 +86,14 @@ public class Bbs_marketDAO {
 	        while (rs.next()) {
 	            Bbs_market bbs = new Bbs_market();
 	            bbs.setRankNumber(totalCount--);
-	            bbs.setBbsID(rs.getInt("bbsID"));
-	            bbs.setBbsTitle(rs.getString("bbsTitle"));
-	            bbs.setUserID(rs.getString("userID"));
-	            bbs.setBbsDate(rs.getString("bbsDate"));
-	            bbs.setBbsContent(rs.getString("bbsContent"));
+	            bbs.setBbsID(rs.getInt(1));
+	            bbs.setBbsTitle(rs.getString(2));
+	            bbs.setUserID(rs.getString(3));
+	            bbs.setBbsDate(rs.getString(4));
+	            bbs.setBbsContent(rs.getString(5));
+	            bbs.setBbsAvailable(rs.getInt(6));
+	            bbs.setBbsCount(rs.getInt(7));
+	            bbs.setLikeCount(rs.getInt(8));
 	            list.add(bbs);
 	        }
 	    } catch (Exception e) {
@@ -127,7 +133,12 @@ public class Bbs_marketDAO {
                 bbs.setBbsDate(rs.getString(4));
                 bbs.setBbsContent(rs.getString(5));
                 bbs.setBbsAvailable(rs.getInt(6));
-                return bbs;
+                int bbsCount=rs.getInt(7);
+				bbs.setBbsCount(bbsCount);
+				bbsCount++;
+				countUpdate(bbsCount, bbsID);
+				bbs.setLikeCount(rs.getInt(8));
+				return bbs;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -175,5 +186,30 @@ public class Bbs_marketDAO {
 	        e.printStackTrace();
 	    }
 	    return -1;  // 오류 발생 시
+	}
+    
+    public int countUpdate(int bbsCount, int bbsID) {
+		String SQL = "update bbs_market set bbsCount = ? where bbsID = ?";
+		try {
+			PreparedStatement pstmt=conn.prepareStatement(SQL);
+			pstmt.setInt(1, bbsCount);
+			pstmt.setInt(2, bbsID);
+			return pstmt.executeUpdate();//insert,delete,update			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return -1;//데이터베이스 오류
+	}
+	
+	public int like(int bbsID) {
+		String SQL = "update bbs_market set likeCount = likeCount + 1 where bbsID = ?";
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1, bbsID);
+			return pstmt.executeUpdate();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return -1;
 	}
 }

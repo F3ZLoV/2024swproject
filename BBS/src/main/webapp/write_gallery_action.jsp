@@ -1,9 +1,11 @@
+<%@page import="bbs_gallery.Bbs_gallery"%>
 <%@ page import="com.oreilly.servlet.MultipartRequest" %>
 <%@ page import="com.oreilly.servlet.multipart.DefaultFileRenamePolicy" %>
 <%@ page import="java.io.File" %>
 <%@ page import="bbs_gallery.Bbs_galleryDAO" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.io.PrintWriter" %>
+<jsp:useBean id="bbs_gallery" class="bbs_gallery.Bbs_gallery" scope="page" />
 <%
     // 로그인 체크
     String userID = null;
@@ -36,7 +38,7 @@
             script.println("</script>");
         } else {
             Bbs_galleryDAO bbsDAO = new Bbs_galleryDAO();
-            int result = bbsDAO.write(bbsTitle, userID, bbsContent, "/images/" + fileName);
+            int result = bbsDAO.write(bbsTitle, userID, bbsContent, "/images/" + fileName, bbs_gallery.getBbsCount(), bbs_gallery.getLikeCount());
             if (result == -1) {
                 PrintWriter script = response.getWriter();
                 script.println("<script>");
