@@ -10,6 +10,11 @@
 <link rel="stylesheet" href="css/custom.css">
 <title>S/W 프로젝트</title>
 </head>
+<style>
+    .form-control, .btn {
+        border-radius: 15px;
+    }
+</style>
 <body>
 	<%
 		String userID = null;
