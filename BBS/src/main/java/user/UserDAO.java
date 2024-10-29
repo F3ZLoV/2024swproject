@@ -99,7 +99,7 @@ public class UserDAO {
 	}
 	
 	public int delete(String userID) {
-		String SQL="delete from user where userID = ?";//특정한 아이디에 해당하는 제목과 내용을 바꿔준다. 
+		String SQL="delete from user where userID = ?";
 		try {
 			PreparedStatement pstmt=conn.prepareStatement(SQL);
 			pstmt.setString(1, userID);

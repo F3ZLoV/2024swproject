@@ -38,7 +38,7 @@
 				<li><a href="bbs_market.jsp">Market</a></li>
 			</ul>
 			<div class="navbar-form navbar-left">
-                    <form method="post" name="search" action="searchbbs.jsp" class="form-inline">
+                    <form method="post" name="search" action="searchResult.jsp" class="form-inline">
                         <div class="form-group">
                             <select class="form-control" name="searchField">
                                 <option value="0">선택</option>
@@ -76,6 +76,7 @@
 				 	aria-expanded="false">회원관리<span class="caret"></span></a>
 				 <ul class="dropdown-menu">
 				 	<li><a href="logoutAction.jsp">로그아웃</a></li>
+				 	<li><a href="UserUpdate.jsp">회원수정</a></li>
 				 </ul>
 				</li>
 			</ul>
