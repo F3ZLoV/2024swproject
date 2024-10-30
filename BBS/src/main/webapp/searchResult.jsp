@@ -37,7 +37,7 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <li><a href="main.jsp">Home</a></li>
-                <li class="active"><a href="bbs.jsp">General</a></li>
+                <li><a href="bbs.jsp">General</a></li>
                 <li><a href="bbs_review.jsp">Review</a></li>
                 <li><a href="bbs_gallery.jsp">Gallery</a></li>
                 <li><a href="bbs_music.jsp">Musics</a></li>
@@ -86,17 +86,7 @@
 	    	    int totalCount = searchResults.size();  // 총 게시글 수 가져오기
 			    int rankNumber = totalCount - (pageNumber - 1) * 10;  // 게시글 번호 계산
 			%>
-			<%
-	            if (searchResults.size() > 0) {
-	                for (PostDTO post : searchResults) {
-	                	String link = null;
-	                	if (post.getBbsTable().equals("bbs")) {
-	                		link = "view.jsp?bbsID=" + post.getBbsID();
-	                	} else {
-	                		link = "view_" + post.getBbsTable() + ".jsp?bbsID=" + post.getBbsID();
-	                	}
-        	%>
-					<table class="table table-striped" style="text-align: center; border: 1px solid #dddddd">
+				<table class="table table-striped" style="text-align: center; border: 1px solid #dddddd">
 					    <thead>
 					        <tr>
 					            <th style="background-color: #eeeeee; text-align: center;">번호</th>
@@ -108,6 +98,16 @@
 					        </tr>
 					    </thead>
 					    <tbody>
+			<%
+	            if (searchResults.size() > 0) {
+	                for (PostDTO post : searchResults) {
+	                	String link = null;
+	                	if (post.getBbsTable().equals("bbs")) {
+	                		link = "view.jsp?bbsID=" + post.getBbsID();
+	                	} else {
+	                		link = "view_" + post.getBbsTable() + ".jsp?bbsID=" + post.getBbsID();
+	                	}
+        	%>
 					        <tr>
 					            <td><%= rankNumber-- %></td> <!-- 게시글 번호 출력 -->
 					            <td><a href="<%= link %>"><%= post.getBbsTitle().replaceAll(" ", "&nbsp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br>") %></a></td>
@@ -116,18 +116,18 @@
 					            <td><%= post.getBbsCount() %></td>
 					            <td>+<%= post.getLikeCount() %></td>
 					        </tr>
-					    </tbody>
-					</table>
 			<%
 	                	}
 	                } else {
 			%>
-					검색 결과가 없습니다.
+					<tr>
+						<td>검색 결과가 없습니다.</td>
+					</tr>
 			<%
 	                }
 			%>
-	        
-
+	        			</tbody>
+					</table>
         </div>
     </div>
     <!-- FOOTER -->

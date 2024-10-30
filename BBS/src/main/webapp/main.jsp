@@ -1,6 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import="java.io.PrintWriter" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="search.SearchDAO" %>
+<%@ page import="search.PostDTO" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,8 +14,67 @@
 <title>S/W 프로젝트</title>
 </head>
 <style>
+	body {
+		background-color: #EEEEEE;	
+	}
     .form-control, .btn {
         border-radius: 15px;
+    }
+    .btn-success {
+        background-color: #90EE90;
+        border-color: #90EE90;
+        color: #000000;
+    }
+    .card {
+    	border-radius: 15px;
+    	background-color: #FFFFFF;
+    }
+    .card-header {
+    	background-color: #F7F7F7;
+        border-radius: 15px 15px 0 0;
+        padding: 8px 12px;
+    }
+    .list-group {
+    	margin-top: 10px;
+    	margin-botton: 10px;
+    }
+    .list-group-item {
+    	margin-bottom: 4px;
+    	background-color: #FFFFFF;
+    }
+    .list-group-item span.badge {
+        margin-left: auto;
+    }
+    .list-group-item:nth-child(1) .number {
+        background-color: red;
+    }
+    .list-group-item:nth-child(2) .number {
+        background-color: black;
+    }
+    .list-group-item:nth-child(3) .number {
+        background-color: #FFD700;
+    }
+    .list-group-item:nth-child(n+4) .number {
+        background-color: #E0E0E0;
+        color: #777;
+    }
+    .list-group-item a {
+        flex-grow: 1;
+        text-align: center;
+		display: inline-block;
+    }
+    .number {
+        color: white;
+        border-radius: 5px;
+        padding: 5px;
+        width: 25px;
+        height: 25px;
+        margin-right: 10px;
+    }
+    .recommend {
+        color: red;
+        margin-left: 10px;
+        text-decoration: underline;
     }
 </style>
 <body>
@@ -90,15 +152,65 @@
 			%>
 		</div>
 	</nav>
-	<div class="container">
-		<div class="jumbotron">
-			<div class="container">
-				<h1>웹 사이트 소개</h1>
-				<p>소개글</p>
-				<p><a href="btn btn-primary btn-pull" href="#" roles="button">자세히 알아보기</a></p>
-			</div>
+	<div class="container mt-5">
+    <div class="row">
+        <!-- 최신글 섹션 -->
+        <div class="col-md-6">
+		    <div class="card">
+		        <div class="card-header bg-light">
+		            <h4 class="mb-0">최신글</h4>
+		        </div>
+		        <ul class="list-group list-group-flush">
+		            <% 
+		                SearchDAO recentDAO = new SearchDAO();
+		                ArrayList<PostDTO> latestPosts = recentDAO.getLatestPosts();
+		                int recentNumber = 1;
+		                for (PostDTO post : latestPosts) { 
+		                    String link = null;
+		                    if (post.getBbsTable().equals("bbs")) {
+		                        link = "view.jsp?bbsID=" + post.getBbsID();
+		                    } else {
+		                        link = "view_" + post.getBbsTable() + ".jsp?bbsID=" + post.getBbsID();
+		                    }
+		            %>
+		            <li class="list-group-item">
+		                <a class="number"><%= recentNumber++ %></a><a href="<%= link %>"><%= post.getBbsTitle() %></a>
+		                <span class="recommend"><%= post.getLikeCount() %></span>
+		            </li>
+		            <% } %>
+		        </ul>
+		    </div>
 		</div>
-	</div>
+
+        <!-- 인기글 섹션 -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h4 class="mb-0">인기글</h4>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <% 
+		                SearchDAO mostLikedDAO = new SearchDAO();
+		                ArrayList<PostDTO> mostLikedPosts = mostLikedDAO.getMostLikedPosts();
+		                int mostLikedNumber = 1;
+		                for (PostDTO post : mostLikedPosts) { 
+		                    String link = null;
+		                    if (post.getBbsTable().equals("bbs")) {
+		                        link = "view.jsp?bbsID=" + post.getBbsID();
+		                    } else {
+		                        link = "view_" + post.getBbsTable() + ".jsp?bbsID=" + post.getBbsID();
+		                    }
+		            %>
+		            <li class="list-group-item">
+		                <a class="number"><%= mostLikedNumber++ %></a><a href="<%= link %>"><%= post.getBbsTitle() %></a>
+		                <span class="recommend"><%= post.getLikeCount() %></span>
+		            </li>
+		            <% } %>
+                </ul>
+            </div>
+        </div>
+    </div>
+    </div>
 	<div class="container">
 		<div id="myCarousel" class="carousel slide" data-ride="carousel">
 			<ol class="carousel-indicators">

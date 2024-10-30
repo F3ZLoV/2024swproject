@@ -104,9 +104,19 @@
 						<td>작성일자</td>
 						<td colspan="2"><%= bbs.getBbsDate().substring(0, 11) + bbs.getBbsDate().substring(11, 13) + "시" + bbs.getBbsDate().substring(14, 16) + "분" %></td>
 					</tr>
+					<%
+					    String content = bbs.getBbsContent().replaceAll(" ", "&nbsp;")
+					                                        .replaceAll("<", "&lt;")
+					                                        .replaceAll(">", "&gt;")
+					                                        .replaceAll("\n", "<br>");
+					
+					    String youtubeLink = "((?:https?://)?(?:www\\.|m\\.)?(?:youtube\\.com/watch\\?v=|youtu\\.be/)([a-zA-Z0-9_-]{11}))";
+					    content = content.replaceAll(youtubeLink, "<iframe width='560' height='315' src='https://www.youtube.com/embed/$2' frameborder='0' allowfullscreen></iframe>");
+					%>
+
 					<tr>
 						<td>내용</td>
-						<td colspan="2" style="min-height: 200px; text-align: left;"><%= bbs.getBbsContent().replaceAll(" ", "&nbsp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br>") %></td>
+						<td colspan="2" style="min-height: 200px; text-align: left;"><%= content %></td>
 					</tr>
 					<tr>
 						<td>조회수</td>
