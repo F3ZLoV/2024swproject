@@ -38,15 +38,15 @@ public class SearchDAO {
         ArrayList<PostDTO> postList = new ArrayList<>();
         try {
             String sql = 
-                "SELECT bbsID, userID, bbsTitle, bbsDate, bbsCount, likeCount, 'bbs' AS bbsTable FROM bbs WHERE " + searchField + " LIKE ? and bbsAvailable = 1 " +
+                "SELECT bbsID, userID, bbsTitle, bbsDate, bbsCount, likeCount, 'bbs' AS bbsTable FROM bbs WHERE LOWER(" + searchField + ") LIKE LOWER(?) and bbsAvailable = 1 " +
                 "UNION ALL " +
-                "SELECT bbsID, userID, bbsTitle, bbsDate, bbsCount, likeCount, 'review' AS bbsTable FROM bbs_review WHERE " + searchField + " LIKE ? and bbsAvailable = 1 " +
+                "SELECT bbsID, userID, bbsTitle, bbsDate, bbsCount, likeCount, 'review' AS bbsTable FROM bbs_review WHERE LOWER(" + searchField + ") LIKE LOWER(?) and bbsAvailable = 1 " +
                 "UNION ALL " +
-                "SELECT bbsID, userID, bbsTitle, bbsDate, bbsCount, likeCount, 'market' AS bbsTable FROM bbs_market WHERE " + searchField + " LIKE ? and bbsAvailable = 1 " +
+                "SELECT bbsID, userID, bbsTitle, bbsDate, bbsCount, likeCount, 'market' AS bbsTable FROM bbs_market WHERE LOWER(" + searchField + ") LIKE LOWER(?) and bbsAvailable = 1 " +
                 "UNION ALL " +
-                "SELECT bbsID, userID, bbsTitle, bbsDate, bbsCount, likeCount, 'gallery' AS bbsTable FROM bbs_gallery WHERE " + searchField + " LIKE ? and bbsAvailable = 1 " +
+                "SELECT bbsID, userID, bbsTitle, bbsDate, bbsCount, likeCount, 'gallery' AS bbsTable FROM bbs_gallery WHERE LOWER(" + searchField + ") LIKE LOWER(?) and bbsAvailable = 1 " +
                 "UNION ALL " +
-                "SELECT bbsID, userID, bbsTitle, bbsDate, bbsCount, likeCount, 'music' AS bbsTable FROM bbs_music WHERE " + searchField + " LIKE ? and bbsAvailable = 1 ";
+                "SELECT bbsID, userID, bbsTitle, bbsDate, bbsCount, likeCount, 'music' AS bbsTable FROM bbs_music WHERE LOWER(" + searchField + ") LIKE LOWER(?) and bbsAvailable = 1 ";
 
             pstmt = conn.prepareStatement(sql);
             

@@ -39,8 +39,18 @@
     	margin-botton: 10px;
     }
     .list-group-item {
+    	display: flex;
+    	align-items: center;
     	margin-bottom: 4px;
     	background-color: #FFFFFF;
+    	padding: 8px 12px;
+    	justify-content: flex-start;
+    }
+    
+    .list-group-item .number {
+    	flex-shrink: 0;
+    	text-align: center;
+    	margin-right: 10px;
     }
     .list-group-item span.badge {
         margin-left: auto;
@@ -62,6 +72,15 @@
         flex-grow: 1;
         text-align: center;
 		display: inline-block;
+        flex-grow: 0;
+        margin-left: 15px;
+        margin-bottom: 5px;
+    }
+    .list-group-item .recommend {
+    	flex-shrink: 0; /* 크기 고정 */
+        color: red; /* 추천수 색상 */
+        margin-left: 5px;
+        margin-bottom: 5px;
     }
     .number {
         color: white;
@@ -143,7 +162,7 @@
 				 	aria-expanded="false">회원관리<span class="caret"></span></a>
 				 <ul class="dropdown-menu">
 				 	<li><a href="logoutAction.jsp">로그아웃</a></li>
-				 	<li><a href="UserUpdate.jsp">회원수정</a></li>
+				 	<li><a href="userUpdate.jsp">회원수정</a></li>
 				 </ul>
 				</li>
 			</ul>

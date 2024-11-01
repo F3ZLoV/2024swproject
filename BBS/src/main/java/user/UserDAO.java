@@ -82,21 +82,40 @@ public class UserDAO {
 		return null;
 	}
 	
-	public int update(String userID, String userPassword, String userName, String userGender, String userEmail ) {
-		String SQL="update user set userPassword = ?, userName = ?, userGender = ?, userEmail = ? where userID = ?";//특정한 아이디에 해당하는 제목과 내용을 바꿔준다. 
-		try {
-			PreparedStatement pstmt=conn.prepareStatement(SQL);
-			pstmt.setString(1, userPassword);
-			pstmt.setString(2, userName);
-			pstmt.setString(3, userGender);
-			pstmt.setString(4, userEmail);
-			pstmt.setString(5, userID);
-			return pstmt.executeUpdate();		
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		return -1;//데이터베이스 오류
+	public int update(String userID, String currentPassword, String newPassword, String userName, String userGender, String userEmail) {
+	    String checkPasswordSQL = "SELECT userPassword FROM USER WHERE userID = ?";
+	    String updateSQL = "UPDATE USER SET userPassword = ?, userName = ?, userGender = ?, userEmail = ? WHERE userID = ?";
+	    
+	    try {
+	        pstmt = conn.prepareStatement(checkPasswordSQL); // 기존 비밀번호를 데이터베이스에서 확인
+	        pstmt.setString(1, userID);
+	        rs = pstmt.executeQuery();
+	        
+	        if (rs.next()) {
+	            if (!rs.getString(1).equals(currentPassword)) {  // 입력한 비밀번호와 DB의 비밀번호가 일치하지 않으면 -2 반환
+	                return -2;
+	            }
+	        } else {
+	            return -1;  // 해당 userID가 존재하지 않음
+	        }
+	        
+	        // 새 비밀번호가 없으면 기존 비밀번호를 그대로 사용
+	        String finalPassword = (newPassword == null || newPassword.isEmpty()) ? currentPassword : newPassword;
+	        
+	        pstmt = conn.prepareStatement(updateSQL);
+	        pstmt.setString(1, finalPassword);
+	        pstmt.setString(2, userName);
+	        pstmt.setString(3, userGender);
+	        pstmt.setString(4, userEmail);
+	        pstmt.setString(5, userID);
+	        
+	        return pstmt.executeUpdate();  // 업데이트 성공 시 1 반환
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return -1;  // 데이터베이스 오류
 	}
+
 	
 	public int delete(String userID) {
 		String SQL="delete from user where userID = ?";
