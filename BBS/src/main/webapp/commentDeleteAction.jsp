@@ -24,10 +24,7 @@
 			script.println("location.href = 'login.jsp'");
 			script.println("</script>");
 		} 
-		int bbsID = 0;
-		if (request.getParameter("bbsID") != null){
-			bbsID = Integer.parseInt(request.getParameter("bbsID"));
-		}
+		
 		//댓글이 유효한지 판별
 		int commentID = 0;
 		if (request.getParameter("commentID") != null) {
@@ -57,12 +54,7 @@
 				script.println("history.back()");
 				script.println("</script>");
 			} else {
-				PrintWriter script = response.getWriter();
-				String real = "C:\\Users\\F3ZLoV\\git\\2024swproject\\BBS\\src\\main\\webapp\\commentUpload";
-				File delFile = new File(real+"\\"+bbsID+"사진"+commentID+".jpg");
-				if(delFile.exists()){
-					delFile.delete();
-				}
+				PrintWriter script = response.getWriter();	
 				script.println("<script>");
 				script.println("location.href=document.referrer;");
 				script.println("</script>");
