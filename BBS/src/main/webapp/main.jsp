@@ -3,7 +3,7 @@
 <%@ page import="java.io.PrintWriter" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="search.SearchDAO" %>
-<%@ page import="search.PostDTO" %>s
+<%@ page import="search.PostDTO" %>
 <!DOCTYPE html>
 <html>
 <head>
