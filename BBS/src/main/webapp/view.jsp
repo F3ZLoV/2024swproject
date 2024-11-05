@@ -1,8 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="java.io.PrintWriter" %>
+<%@ page import="java.io.File"%>
 <%@ page import="bbs.Bbs" %>
 <%@ page import="bbs.BbsDAO" %>
+<%@page import="comment.Comment"%>
+<%@page import="comment.CommentDAO"%>
+<%@page import="java.util.ArrayList"%>
+<jsp:useBean id="comment" class="comment.Comment" scope="page" />
+<jsp:setProperty name="comment" property="commentText" />
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,24 +20,28 @@
 <title>S/W 프로젝트</title>
 </head>
 <body>
-	<%
-		String userID = null;
-		if (session.getAttribute("userID") != null) {
-			userID = (String) session.getAttribute("userID");
-		}
-		int bbsID = 0;
-		if (request.getParameter("bbsID") != null) {
-			bbsID = Integer.parseInt(request.getParameter("bbsID"));
-		}
-		if (bbsID == 0) {
-			PrintWriter script = response.getWriter();
-			script.println("<script>");
-			script.println("alert('유효하지 않은 글입니다.')");
-			script.println("location.href = 'bbs.jsp';");
-			script.println("</script>");
-		}
-		Bbs bbs = new BbsDAO().getBbs(bbsID);
-	%>
+<%
+	String userID = null;
+	if (session.getAttribute("userID") != null) {
+		userID = (String) session.getAttribute("userID");
+	}
+	int bbsID = 0;
+	if (request.getParameter("bbsID") != null) {
+		bbsID = Integer.parseInt(request.getParameter("bbsID"));
+	}
+	if (bbsID == 0) {
+		PrintWriter script = response.getWriter();
+		script.println("<script>");
+		script.println("alert('유효하지 않은 글입니다.')");
+		script.println("location.href = 'bbs.jsp';");
+		script.println("</script>");
+	}
+	Bbs bbs = new BbsDAO().getBbs(bbsID);
+	CommentDAO commentDAO = new CommentDAO();
+	ArrayList<Comment> list = commentDAO.getList(bbsID);
+	request.setAttribute("commentList", list);
+
+%>
 	<nav class="navbar navbar-default">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle collapsed"
@@ -131,6 +142,83 @@
 			%>
 		</div>
 	</div>
+	<div class="container">
+    <div class="row">
+        <table class="table table-striped" style="text-align: center; border: 1px solid #dddddd">
+            <tbody>
+            <tr>
+                <td align="left" bgcolor="beige">댓글</td>
+            </tr>
+            <c:forEach var="comment" items="${commentList}">
+                <!-- 댓글이 상위 댓글인지 확인 -->
+                <div class="container" style="margin-left: ${comment.parentCommentID != null ? '200px' : '0'};">
+                    <div class="row">
+                        <table class="table table-striped" style="text-align: center; border: 1px solid #dddddd">
+                            <tbody>
+                            <tr>
+                                <td align="left">
+                                    ${comment.userID}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    ${comment.commentDate.substring(0,10)} ${comment.commentDate.substring(11,13)}시${comment.commentDate.substring(14,16)}분
+                                </td>
+                                <td align="right">
+                                    <!-- 댓글 작성자만 수정/삭제 가능 -->
+                                    <c:if test="${comment.userID != null && comment.userID == userID}">
+                                        <form name="p_search">
+                                            <a type="button" onclick="nwindow(${bbsID},${comment.commentID})" class="btn-primary">수정</a>
+                                        </form>
+                                        <a onclick="return confirm('정말로 삭제하시겠습니까?')" href="commentDeleteAction.jsp?bbsID=${bbsID}&commentID=${comment.commentID}" class="btn-primary">삭제</a>
+                                    </c:if>
+                                    <a href="#" onclick="showReplyForm(${comment.commentID})" class="btn-primary">답글</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" align="left">${comment.commentText}</td>
+                            </tr>
+                            <!-- 답글 입력 폼 -->
+                            <tr id="replyForm_${comment.commentID}" style="display:none;">
+                                <td colspan="5">
+                                    <form method="post" action="commentAction.jsp?bbsID=<%= bbsID%>">
+                                        <input type="hidden" name="parentCommentID" value="${comment.commentID}">
+                                        <textarea name="commentText" class="form-control" placeholder="답글을 작성해주세요."></textarea>
+                                        <input type="submit" class="btn-primary pull" value="답글 작성">
+                                    </form>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </c:forEach>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+	<div class="container">
+	    <div class="form-group">
+	    <form method="post" action="commentAction.jsp?bbsID=<%= bbsID %>">
+	        <table class="table table-striped" style="text-align: center; border: 1px solid #dddddd">
+	            <tr>
+	                <td style="border-bottom:none;" valign="middle"><br><br><%= userID %></td>
+	                <td><input type="text" style="height:100px;" class="form-control" placeholder="댓글을 작성해주세요." name="commentText"></td>
+	                <td><br><br><input type="submit" class="btn-primary pull" value="댓글 작성"></td>
+	            </tr>
+	        </table>
+	    </form>
+	    </div>
+	</div>
+	<script>
+		function showReplyForm(commentID) {
+	    var replyForm = document.getElementById("replyForm_" + commentID);
+	    if (replyForm.style.display === "none") {
+	        replyForm.style.display = "block";
+	    } else {
+	        replyForm.style.display = "none";
+	    }
+	}
+	</script>
+		
 	<!-- FOOTER -->
 	<footer style="background-color: #000000; color: #ffffff">
 		<div class="container">
@@ -156,6 +244,13 @@
 			</div>
 		</div>
 	</footer>
+	<script type="text/javascript">
+		function nwindow(bbsID,commentID){
+			window.name = "commentParant";
+			var url= "commentUpdate.jsp?bbsID="+bbsID+"&commentID="+commentID;
+			window.open(url,"","width=600,height=230,left=300");
+		}
+	</script>
 	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 	<script src="js/bootstrap.js"></script>
 </body>
