@@ -51,8 +51,8 @@ public class BbsDAO {
 		return -1; // 데이터베이스 오류
 	}
 	
-	public int write(String bbsTitle, String userID, String bbsContent, int bbsCount, int likeCount) {
-		String SQL = "INSERT INTO BBS VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+	public int write(String bbsTitle, String userID, String bbsContent, String category, int bbsCount, int likeCount) {
+		String SQL = "INSERT INTO BBS VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1,  getNext());
@@ -63,6 +63,7 @@ public class BbsDAO {
 			pstmt.setInt(6, 1);
 			pstmt.setInt(7, bbsCount);
 			pstmt.setInt(8, likeCount);
+			pstmt.setString(9, category);
 			return pstmt.executeUpdate();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -90,6 +91,7 @@ public class BbsDAO {
 	            bbs.setBbsAvailable(rs.getInt(6));
 	            bbs.setBbsCount(rs.getInt(7));
 	            bbs.setLikeCount(rs.getInt(8));
+	            bbs.setCategory(rs.getString(9));
 	            list.add(bbs);
 	        }
 	    } catch (Exception e) {
@@ -132,6 +134,7 @@ public class BbsDAO {
 				bbsCount++;
 				countUpdate(bbsCount, bbsID);
 				bbs.setLikeCount(rs.getInt(8));
+				bbs.setCategory(rs.getString(9));
 				return bbs;
 			}
 		} catch (Exception e) {
@@ -179,6 +182,49 @@ public class BbsDAO {
 	    }
 	    return -1;  // 오류 발생 시
 	}
+	
+	public ArrayList<Bbs> getListByCategory(int pageNumber, String category) {
+	    String SQL = "SELECT * FROM BBS WHERE bbsAvailable = 1 AND category = ? ORDER BY bbsID DESC LIMIT ?, 10";
+	    ArrayList<Bbs> list = new ArrayList<Bbs>();
+	    try {
+	        PreparedStatement pstmt = conn.prepareStatement(SQL);
+	        pstmt.setString(1, category);
+	        pstmt.setInt(2, (pageNumber - 1) * 10);
+	        rs = pstmt.executeQuery();
+	        while (rs.next()) {
+	            Bbs bbs = new Bbs();
+	            bbs.setBbsID(rs.getInt(1));
+	            bbs.setBbsTitle(rs.getString(2));
+	            bbs.setUserID(rs.getString(3));
+	            bbs.setBbsDate(rs.getString(4));
+	            bbs.setBbsContent(rs.getString(5));
+	            bbs.setBbsAvailable(rs.getInt(6));
+	            bbs.setBbsCount(rs.getInt(7));
+	            bbs.setLikeCount(rs.getInt(8));
+	            bbs.setCategory(rs.getString(9));  // 카테고리 추가
+	            list.add(bbs);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return list;
+	}
+
+	public int getTotalCountByCategory(String category) {
+	    String SQL = "SELECT COUNT(*) FROM BBS WHERE bbsAvailable = 1 AND category = ?";
+	    try {
+	        PreparedStatement pstmt = conn.prepareStatement(SQL);
+	        pstmt.setString(1, category);
+	        ResultSet rs = pstmt.executeQuery();
+	        if (rs.next()) {
+	            return rs.getInt(1);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return -1;
+	}
+
 
 	public int countUpdate(int bbsCount, int bbsID) {
 		String SQL = "update bbs set bbsCount = ? where bbsID = ?";
@@ -204,5 +250,4 @@ public class BbsDAO {
 		}
 		return -1;
 	}
-	
 }

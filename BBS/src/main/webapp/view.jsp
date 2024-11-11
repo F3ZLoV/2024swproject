@@ -18,8 +18,39 @@
 <link rel="stylesheet" href="css/bootstrap.css">
 <link rel="stylesheet" href="css/custom.css">
 <title>S/W 프로젝트</title>
+<style>
+ /* 댓글 스타일 */
+    .comment {
+        margin-bottom: 20px;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+    }
+    /* 대댓글 들여쓰기 스타일 */
+    .reply {
+        margin-left: 40px;
+    }
+    /* 테이블 행 간격 설정 */
+    .table {
+        border-spacing: 0 10px; /* 각 행 사이에 10px의 간격 추가 */
+    }
+    /* 일반 댓글 스타일 */
+    .comment-container td {
+        padding-left: 0; /* 기본 들여쓰기 없음 */
+    }
+    /* 대댓글 스타일 */
+    .comment-reply td {
+        padding-left: 50px; /* 대댓글의 들여쓰기 설정 */
+    }
+</style>
 </head>
 <body>
+<script>
+    function showReplyForm(commentID) {
+        var replyForm = document.getElementById("replyForm_" + commentID);
+        replyForm.style.display = replyForm.style.display === "none" ? "block" : "none";
+    }
+</script>
 <%
 	String userID = null;
 	if (session.getAttribute("userID") != null) {
@@ -104,6 +135,10 @@
 				</thead>
 				<tbody>
 					<tr>
+				        <td style="width: 20%;"></td>
+				        <td colspan="2"><small><%= bbs.getCategory() %></small></td>
+				    </tr>
+					<tr>
 						<td style="width: 20%;">글 제목</td>
 						<td colspan="2"><%= bbs.getBbsTitle().replaceAll(" ", "&nbsp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br>") %></td>
 					</tr>
@@ -144,56 +179,64 @@
 	</div>
 	<div class="container">
     <div class="row">
-        <table class="table table-striped" style="text-align: center; border: 1px solid #dddddd">
-            <tbody>
-            <tr>
-                <td align="left" bgcolor="beige">댓글</td>
-            </tr>
+        <table class="table table-striped" style="text-align: center; border: 1px solid #dddddd;">
+            <!-- 일반 댓글 반복 출력 -->
             <c:forEach var="comment" items="${commentList}">
-                <!-- 댓글이 상위 댓글인지 확인 -->
-                <div class="container" style="margin-left: ${comment.parentCommentID != null ? '200px' : '0'};">
-                    <div class="row">
-                        <table class="table table-striped" style="text-align: center; border: 1px solid #dddddd">
-                            <tbody>
-                            <tr>
-                                <td align="left">
-                                    ${comment.userID}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                    ${comment.commentDate.substring(0,10)} ${comment.commentDate.substring(11,13)}시${comment.commentDate.substring(14,16)}분
-                                </td>
-                                <td align="right">
-                                    <!-- 댓글 작성자만 수정/삭제 가능 -->
-                                    <c:if test="${comment.userID != null && comment.userID == userID}">
-                                        <form name="p_search">
-                                            <a type="button" onclick="nwindow(${bbsID},${comment.commentID})" class="btn-primary">수정</a>
+                <c:if test="${comment.parentCommentID == 0}">
+                    <tbody>
+                        <tr>
+                            <td align="left">
+                                ${comment.userID} &nbsp;&nbsp;
+                                ${comment.commentDate.substring(0, 10)} ${comment.commentDate.substring(11, 13)}시 ${comment.commentDate.substring(14, 16)}분
+                            </td>
+                            <td align="right">
+                                <c:if test="${comment.userID != null && comment.userID == userID}">
+                                    <a type="button" onclick="nwindow(${bbsID}, ${comment.commentID})" class="btn-primary">수정</a>
+                                    <a onclick="return confirm('정말로 삭제하시겠습니까?')" href="commentDeleteAction.jsp?bbsID=${bbsID}&commentID=${comment.commentID}" class="btn-primary">삭제</a>
+                                </c:if>
+                                <a href="#" onclick="showReplyForm(${comment.commentID})" class="btn-primary">답글</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" align="left">
+                                ${comment.commentText}
+                            </td>
+                        </tr>
+                        <!-- 대댓글 반복 출력 -->
+                        <c:forEach var="reply" items="${commentList}">
+                            <c:if test="${reply.parentCommentID == comment.commentID}">
+                                <tr>
+                                    <td align="left" colspan="5" style="padding-left: 50px;">
+                                        ${reply.userID} &nbsp;&nbsp;
+                                        ${reply.commentDate.substring(0, 10)} ${reply.commentDate.substring(11, 13)}시 ${reply.commentDate.substring(14, 16)}분
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" align="left" style="padding-left: 50px;">
+                                        ${reply.commentText}
+                                    </td>
+                                </tr>
+                                <!-- 답글 입력 폼 -->
+                                <!-- 답글 왜 안되지? 미래의 나 해줘 -->
+                                <tr id="replyForm_${reply.commentID}" style="display: none;">
+                                    <td colspan="5" style="padding-left: 50px;">
+                                        <form method="post" action="commentAction.jsp?bbsID=<%= bbsID %>">
+                                            <input type="hidden" name="parentCommentID" value="${reply.commentID}">
+                                            <textarea name="commentText" class="form-control" placeholder="답글을 작성해주세요."></textarea>
+                                            <input type="submit" class="btn-primary pull" value="답글 작성">
                                         </form>
-                                        <a onclick="return confirm('정말로 삭제하시겠습니까?')" href="commentDeleteAction.jsp?bbsID=${bbsID}&commentID=${comment.commentID}" class="btn-primary">삭제</a>
-                                    </c:if>
-                                    <a href="#" onclick="showReplyForm(${comment.commentID})" class="btn-primary">답글</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="5" align="left">${comment.commentText}</td>
-                            </tr>
-                            <!-- 답글 입력 폼 -->
-                            <tr id="replyForm_${comment.commentID}" style="display:none;">
-                                <td colspan="5">
-                                    <form method="post" action="commentAction.jsp?bbsID=<%= bbsID%>">
-                                        <input type="hidden" name="parentCommentID" value="${comment.commentID}">
-                                        <textarea name="commentText" class="form-control" placeholder="답글을 작성해주세요."></textarea>
-                                        <input type="submit" class="btn-primary pull" value="답글 작성">
-                                    </form>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                                    </td>
+                                </tr>
+                            </c:if>
+                        </c:forEach>
+                    </tbody>
+                </c:if>
             </c:forEach>
-            </tr>
-            </tbody>
         </table>
     </div>
 </div>
+
+
 
 	<div class="container">
 	    <div class="form-group">
@@ -208,16 +251,6 @@
 	    </form>
 	    </div>
 	</div>
-	<script>
-		function showReplyForm(commentID) {
-	    var replyForm = document.getElementById("replyForm_" + commentID);
-	    if (replyForm.style.display === "none") {
-	        replyForm.style.display = "block";
-	    } else {
-	        replyForm.style.display = "none";
-	    }
-	}
-	</script>
 		
 	<!-- FOOTER -->
 	<footer style="background-color: #000000; color: #ffffff">

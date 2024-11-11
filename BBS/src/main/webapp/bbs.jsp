@@ -29,6 +29,7 @@
         if (request.getParameter("pageNumber") != null) {
             pageNumber = Integer.parseInt(request.getParameter("pageNumber"));
         }
+        String category = request.getParameter("category");
     %>
     <nav class="navbar navbar-default">
         <div class="navbar-header">
@@ -83,80 +84,96 @@
         </div>
     </nav>
     <div class="container">
+    	<div class="row mb-3">
+    	<!-- 카테고리 버튼 -->
+    		<div class="btn-group" role="group" aria-label="Category">
+	            <a href="bbs.jsp?category=" class="btn btn-secondary <%= (category == null || category.equals("")) ? "active" : "" %>">전체</a>
+	            <a href="bbs.jsp?category=잡담" class="btn btn-secondary <%= "잡담".equals(category) ? "active" : "" %>">잡담</a>
+	            <a href="bbs.jsp?category=음향" class="btn btn-secondary <%= "음향".equals(category) ? "active" : "" %>">음향</a>
+	            <a href="bbs.jsp?category=IT" class="btn btn-secondary <%= "IT".equals(category) ? "active" : "" %>">IT</a>
+	            <a href="bbs.jsp?category=뉴스" class="btn btn-secondary <%= "뉴스".equals(category) ? "active" : "" %>">뉴스</a>
+	            <a href="bbs.jsp?category=유머" class="btn btn-secondary <%= "유머".equals(category) ? "active" : "" %>">유머</a>
+	            <a href="bbs.jsp?category=인사" class="btn btn-secondary <%= "인사".equals(category) ? "active" : "" %>">인사</a>
+	            <a href="bbs.jsp?category=공지" class="btn btn-secondary <%= "공지".equals(category) ? "active" : "" %>">공지</a>
+	        </div>
+		</div>
         <div class="row">
             <%
-			    BbsDAO bbsDAO = new BbsDAO();
-			    ArrayList<Bbs> list = bbsDAO.getList(pageNumber);
-			    int totalCount = bbsDAO.getTotalCount();  // 총 게시글 수 가져오기
-			    int rankNumber = totalCount - (pageNumber - 1) * 10;  // 게시글 번호 계산
+	            BbsDAO bbsDAO = new BbsDAO();
+	            ArrayList<Bbs> list = (category == null || category.isEmpty()) ? bbsDAO.getList(pageNumber) : bbsDAO.getListByCategory(pageNumber, category);
+	            int totalCount = (category == null || category.isEmpty()) ? bbsDAO.getTotalCount() : bbsDAO.getTotalCountByCategory(category);
+	            int rankNumber = totalCount - (pageNumber - 1) * 10;
 			%>
 			<table class="table table-striped" style="text-align: center; border: 1px solid #dddddd">
-			    <thead>
-			        <tr>
-			            <th style="background-color: #eeeeee; text-align: center;">번호</th>
-			            <th style="background-color: #eeeeee; text-align: center;">제목</th>
-			            <th style="background-color: #eeeeee; text-align: center;">작성자</th>
-			            <th style="background-color: #eeeeee; text-align: center;">작성일</th>
-			            <th style="background-color: #eeeeee; text-align: center;">조회수</th>
-			            <th style="background-color: #eeeeee; text-align: center;">추천수</th>
-			        </tr>
-			    </thead>
-			    <tbody>
-			        <%
-			            for (Bbs bbs : list) {
-			        %>
-			        <tr>
-			            <td><%= rankNumber-- %></td> <!-- 게시글 번호 출력 -->
-			            <td><a href="view.jsp?bbsID=<%= bbs.getBbsID() %>"><%= bbs.getBbsTitle().replaceAll(" ", "&nbsp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br>") %></a></td>
-			            <td><%= bbs.getUserID() %></td>
-			            <td><%= bbs.getBbsDate().substring(0, 11) + " " + bbs.getBbsDate().substring(11, 13) + "시" + bbs.getBbsDate().substring(14, 16) + "분" %></td>
-			            <td><%= bbs.getBbsCount() %></td>
-			            <td>+<%= bbs.getLikeCount() %></td>
-			        </tr>
-			        <%
-			            }
-			        %>
-			    </tbody>
-			</table>
+		    <thead>
+		        <tr>
+		            <th style="background-color: #eeeeee; text-align: center;">번호</th>
+		            <th style="background-color: #eeeeee; text-align: center;">카테고리</th>
+		            <th style="background-color: #eeeeee; text-align: center;">제목</th>
+		            <th style="background-color: #eeeeee; text-align: center;">작성자</th>
+		            <th style="background-color: #eeeeee; text-align: center;">작성일</th>
+		            <th style="background-color: #eeeeee; text-align: center;">조회수</th>
+		            <th style="background-color: #eeeeee; text-align: center;">추천수</th>
+		        </tr>
+		    </thead>
+		    <tbody>
+		        <%
+		            for (Bbs bbs : list) {
+		        %>
+		        <tr>
+		            <td><%= rankNumber-- %></td> <!-- 게시글 번호 출력 -->
+		            <td><%= bbs.getCategory() %></td> <!-- 카테고리 출력 -->
+		            <td><a href="view.jsp?bbsID=<%= bbs.getBbsID() %>"><%= bbs.getBbsTitle().replaceAll(" ", "&nbsp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br>") %></a></td>
+		            <td><%= bbs.getUserID() %></td>
+		            <td><%= bbs.getBbsDate().substring(0, 11) + " " + bbs.getBbsDate().substring(11, 13) + "시" + bbs.getBbsDate().substring(14, 16) + "분" %></td>
+		            <td><%= bbs.getBbsCount() %></td>
+		            <td>+<%= bbs.getLikeCount() %></td>
+		        </tr>
+		        <%
+		            }
+		        %>
+		    </tbody>
+		</table>
+
 
         <%
-            int pageSize = 10;  // 페이지당 게시글 수
-            int totalPages = (int) Math.ceil((double) totalCount / pageSize);  // 총 페이지 수 계산
-            int pageBlock = 5;  // 한 번에 표시할 페이지 번호 개수
-            int startPage = ((pageNumber - 1) / pageBlock) * pageBlock + 1;
-            int endPage = startPage + pageBlock - 1;
-            if (endPage > totalPages) {
-                endPage = totalPages;
-            }
-        %>
-
-        <nav aria-label="Page navigation">
-            <ul class="pagination">
-                <% if (startPage > 1) { %>
-                <li>
-                    <a href="bbs.jsp?pageNumber=<%=startPage - 1%>" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                </li>
-                <% } %>
-                
-                <% for (int i = startPage; i <= endPage; i++) { %>
-                <li class="<%= (i == pageNumber) ? "active" : "" %>">
-                    <a href="bbs.jsp?pageNumber=<%=i%>"><%=i%></a>
-                </li>
-                <% } %>
-                
-                <% if (endPage < totalPages) { %>
-                <li>
-                    <a href="bbs.jsp?pageNumber=<%=endPage + 1%>" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
-                </li>
-                <% } %>
-            </ul>
-        </nav>
-
-        <a href="write.jsp" class="btn btn-primary pull-right">글쓰기</a>
+		    int pageSize = 10;  // 페이지당 게시글 수
+		    int totalPages = (int) Math.ceil((double) totalCount / pageSize);  // 총 페이지 수 계산
+		    int pageBlock = 5;  // 한 번에 표시할 페이지 번호 개수
+		    int startPage = ((pageNumber - 1) / pageBlock) * pageBlock + 1;
+		    int endPage = startPage + pageBlock - 1;
+		    if (endPage > totalPages) {
+		        endPage = totalPages;
+		    }
+		%>
+		
+		<nav aria-label="Page navigation">
+		    <ul class="pagination">
+		        <% if (startPage > 1) { %>
+		        <li>
+		            <a href="bbs.jsp?category=<%=category%>&pageNumber=<%=startPage - 1%>" aria-label="Previous">
+		                <span aria-hidden="true">&laquo;</span>
+		            </a>
+		        </li>
+		        <% } %>
+		
+		        <% for (int i = startPage; i <= endPage; i++) { %>
+		        <li class="<%= (i == pageNumber) ? "active" : "" %>">
+		            <a href="bbs.jsp?category=<%=category%>&pageNumber=<%=i%>"><%=i%></a>
+		        </li>
+		        <% } %>
+		
+		        <% if (endPage < totalPages) { %>
+		        <li>
+		            <a href="bbs.jsp?category=<%=category%>&pageNumber=<%=endPage + 1%>" aria-label="Next">
+		                <span aria-hidden="true">&raquo;</span>
+		            </a>
+		        </li>
+		        <% } %>
+		    </ul>
+		</nav>
+		
+		<a href="write.jsp" class="btn btn-primary pull-right">글쓰기</a>
         </div>
     </div>
     <!-- FOOTER -->

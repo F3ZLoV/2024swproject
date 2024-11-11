@@ -2,8 +2,12 @@
     pageEncoding="UTF-8"%>
 <%@ page import="java.io.PrintWriter" %>
 <%@ page import="java.util.ArrayList" %>
+<%@page import="java.util.regex.Matcher"%>
+<%@page import="java.util.regex.Pattern"%>
 <%@ page import="search.SearchDAO" %>
 <%@ page import="search.PostDTO" %>
+<%@ page import="bbs_music.Bbs_musicDAO" %>
+<%@ page import="bbs_music.Bbs_music" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -94,6 +98,23 @@
         color: red;
         margin-left: 10px;
         text-decoration: underline;
+    }
+    .thumnail-container {
+    	display: flex;
+    	flex-wrap: nowrap;
+    	overflow-x: auto;
+    	position: relative;
+    	width: 120px;
+    	height: 120px;
+    	overflow: hidden;
+    }
+    .thumnail-item {
+    	margin: 5px;
+    	flex-shrink: 0;
+    }
+    #music-thumnails {
+    	display: flex;
+    	flex-wrap: wrap;
     }
 </style>
 <body>
@@ -256,6 +277,97 @@
 			</a>
 		</div>
 	</div>
+	<div class="container mt-5">
+    <div class="row">
+        <!-- 음악 섹션 -->
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h4 class="mb-0">음악</h4>
+                </div>
+                <div id="music-thumbnails" class="list-group list-group-flush">
+                    <% 
+                        Bbs_musicDAO musicDAO = new Bbs_musicDAO();
+                        ArrayList<Bbs_music> musicPosts = musicDAO.getMusicPosts();
+                        int pageSize = 5;
+                        int pageCount = (int) Math.ceil((double) musicPosts.size() / pageSize);
+                        for (int i = 0; i < musicPosts.size(); i++) {
+                            Bbs_music post = musicPosts.get(i);
+                            String link = "view_music.jsp?bbsID=" + post.getBbsID();
+                            String content = post.getBbsContent();
+                            String youtubeId = "";
+                            
+                            // YouTube 링크에서 ID 추출
+                            Pattern pattern = Pattern.compile("https?://(?:www\\.|m\\.)?(?:youtube\\.com/watch\\?v=|youtu\\.be/)([a-zA-Z0-9_-]{11})");
+                            Matcher matcher = pattern.matcher(content);
+                            if (matcher.find()) {
+                                youtubeId = matcher.group(1); // ID 추출
+                            }
+                    %>
+                    <div class="col-md-2 thumbnail-item" data-page="<%= (i / pageSize) + 1 %>" style="display: none;">
+                        <% if (!youtubeId.isEmpty()) { %>
+                            <a href="<%= link %>">
+                                <img src="https://img.youtube.com/vi/<%= youtubeId %>/0.jpg" 
+                                     alt="<%=post.getBbsTitle() %>" 
+                                     class="img-thumbnail" 
+                                     style="width: 120px; height: 90px;">
+                            </a>
+                        <% } %>
+                    </div>
+                    <% } %>
+                </div>
+                <!-- 페이징 버튼 -->
+                <div class="card-footer text-center">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Previous" onclick="showPage(currentPage - 1)">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            <% for (int i = 1; i <= pageCount; i++) { %>
+                                <li class="page-item"><a class="page-link" href="#" onclick="showPage(<%= i %>)"><%= i %></a></li>
+                            <% } %>
+                            <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Next" onclick="showPage(currentPage + 1)">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <script>
+	    let currentPage = 1;
+	    const pageSize = 5;
+	    const pageCount = <%= pageCount %>;
+	
+	    function showPage(page) {
+	        if (page < 1 || page > pageCount) return;
+	        currentPage = page;
+	
+	        const items = document.querySelectorAll('.thumbnail-item');
+	        items.forEach(item => {
+	            item.style.display = (item.getAttribute('data-page') == currentPage) ? 'block' : 'none';
+	        });
+	
+	        document.querySelectorAll('.page-item').forEach(item => {
+	            item.classList.remove('active');
+	        });
+	
+	        document.querySelector('.pagination .page-item:nth-child(' + (currentPage + 1) + ')').classList.add('active');
+	    }
+	
+	    document.addEventListener('DOMContentLoaded', function () {
+	        showPage(1);
+	    });
+	</script>
+
+		
 	<!-- FOOTER -->
 	<footer style="background-color: #000000; color: #ffffff">
 		<div class="container">

@@ -6,6 +6,7 @@
 <jsp:useBean id="bbs" class="bbs.Bbs" scope="page" />
 <jsp:setProperty name="bbs" property="bbsTitle"/>
 <jsp:setProperty name="bbs" property="bbsContent"/>
+<jsp:setProperty name="bbs" property="category"/>
 <!DOCTYPE html>
 <html>
 <head>
@@ -33,7 +34,7 @@
 					script.println("</script>");
 				} else {
 					BbsDAO bbsDAO = new BbsDAO();
-					int result = bbsDAO.write(bbs.getBbsTitle(), userID, bbs.getBbsContent(), bbs.getBbsCount(), bbs.getLikeCount());
+					int result = bbsDAO.write(bbs.getBbsTitle(), userID, bbs.getBbsContent(), bbs.getCategory(), bbs.getBbsCount(), bbs.getLikeCount());
 					if(result == -1) {
 						PrintWriter script = response.getWriter();
 						script.println("<script>");

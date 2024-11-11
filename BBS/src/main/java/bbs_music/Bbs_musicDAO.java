@@ -201,5 +201,31 @@ public class Bbs_musicDAO {
 		}
 		return -1;
 	}
+	
+	public ArrayList<Bbs_music> getMusicPosts() {
+        String SQL = "SELECT * FROM BBS_MUSIC "
+        		+ "WHERE bbsAvailable = 1 AND "
+        		+ "bbsContent LIKE '%youtube.com%' OR bbsContent LIKE '%youtu.be%' "
+        		+ "ORDER BY bbsID DESC LIMIT 10";
+        ArrayList<Bbs_music> musicPosts = new ArrayList<>();
+        try (PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Bbs_music bbs = new Bbs_music();
+                bbs.setBbsID(rs.getInt("bbsID"));
+                bbs.setBbsTitle(rs.getString("bbsTitle"));
+                bbs.setUserID(rs.getString("userID"));
+                bbs.setBbsDate(rs.getString("bbsDate"));
+                bbs.setBbsContent(rs.getString("bbsContent"));
+                bbs.setBbsAvailable(rs.getInt("bbsAvailable"));
+                bbs.setBbsCount(rs.getInt("bbsCount"));
+                bbs.setLikeCount(rs.getInt("likeCount"));
+                musicPosts.add(bbs);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return musicPosts;
+    }
 
 }

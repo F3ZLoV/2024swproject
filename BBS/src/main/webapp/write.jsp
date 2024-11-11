@@ -83,6 +83,19 @@
 					<td><input type="text" class="form-control" placeholder="글 제목" name="bbsTitle" maxlength="50"></td>
 				</tr>
 				<tr>
+                    <td>
+                        <select class="form-control" name="category">
+                            <option value="잡담">잡담</option>
+                            <option value="음향">음향</option>
+                            <option value="IT">IT</option>
+                            <option value="뉴스">뉴스</option>
+                            <option value="유머">유머</option>
+                            <option value="인사">인사</option>
+                            <option value="공지">공지</option>
+                        </select>
+                    </td>
+                </tr>
+				<tr>
 					<td><textarea class="form-control" placeholder="글 내용" name="bbsContent" maxlength="2048" style="height: 350px"></textarea></td>
 				</tr>
 			</tbody>
