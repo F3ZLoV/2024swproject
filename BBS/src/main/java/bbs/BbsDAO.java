@@ -5,6 +5,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class BbsDAO {
 	private Connection conn;
@@ -99,6 +102,66 @@ public class BbsDAO {
 	    }
 	    return list;
 	}
+	
+	private String getOrderBySortingText(String sortBy, String sortOrder) {
+	    String orderColumn;
+	    switch (sortBy) {
+	        case "날짜":
+	            orderColumn = "bbsDate";
+	            break;
+	        case "조회순":
+	            orderColumn = "bbsCount";
+	            break;
+	        case "추천순":
+	            orderColumn = "likeCount";
+	            break;
+	        default:
+	            orderColumn = "bbsID";
+	            break;
+	    }
+	    return orderColumn + (sortOrder.equals("DESC") ? " DESC" : " ASC");
+	}
+
+	
+	public ArrayList<Bbs> getList(int pageNumber, String category, String sortBy, String sortOrder) {
+	    String orderBy = getOrderBySortingText(sortBy, sortOrder);
+	    String SQL = "SELECT * FROM BBS WHERE bbsAvailable = 1" 
+	               + (category != null && !category.isEmpty() ? " AND category = ?" : "") 
+	               + " ORDER BY " + orderBy + " LIMIT ?, 10";
+	    
+	    ArrayList<Bbs> list = new ArrayList<Bbs>();
+	    try {
+	        PreparedStatement pstmt = conn.prepareStatement(SQL);
+	        int parameterIndex = 1;
+	        
+	        if (category != null && !category.isEmpty()) {
+	            pstmt.setString(parameterIndex++, category);
+	        }
+	        
+	        pstmt.setInt(parameterIndex, (pageNumber - 1) * 10);
+	        rs = pstmt.executeQuery();
+	        
+	        // 결과 리스트 생성
+	        while (rs.next()) {
+	            Bbs bbs = new Bbs();
+	            bbs.setBbsID(rs.getInt("bbsID"));
+	            bbs.setBbsTitle(rs.getString("bbsTitle"));
+	            bbs.setUserID(rs.getString("userID"));
+	            bbs.setBbsDate(rs.getString("bbsDate"));
+	            bbs.setBbsContent(rs.getString("bbsContent"));
+	            bbs.setBbsAvailable(rs.getInt("bbsAvailable"));
+	            bbs.setBbsCount(rs.getInt("bbsCount"));
+	            bbs.setLikeCount(rs.getInt("likeCount"));
+	            bbs.setCategory(rs.getString("category"));
+	            list.add(bbs);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return list;
+	}
+
+
 	
 	public boolean nextPage(int pageNumber) {
 		String SQL = "SELECT * FROM BBS WHERE bbsID < ? AND bbsAvailable = 1";
@@ -201,7 +264,7 @@ public class BbsDAO {
 	            bbs.setBbsAvailable(rs.getInt(6));
 	            bbs.setBbsCount(rs.getInt(7));
 	            bbs.setLikeCount(rs.getInt(8));
-	            bbs.setCategory(rs.getString(9));  // 카테고리 추가
+	            bbs.setCategory(rs.getString(9)); 
 	            list.add(bbs);
 	        }
 	    } catch (Exception e) {
@@ -224,6 +287,28 @@ public class BbsDAO {
 	    }
 	    return -1;
 	}
+	
+	 public String getDisplayDate(String dateString) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            Date date = sdf.parse(dateString);
+            Date currentDate = new Date();
+            long diffInSeconds = (currentDate.getTime() - date.getTime()) / 1000;
+
+            if (diffInSeconds < 3600) {
+                return (diffInSeconds / 60) + "분 전";
+            } else if (diffInSeconds < 86400) {
+                return (diffInSeconds / 3600) + "시간 전";
+            } else if (diffInSeconds < 604800) {
+                return (diffInSeconds / 86400) + "일 전";
+            } else {
+                return new SimpleDateFormat("yy.MM.dd").format(date);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return dateString;
+    }
 
 
 	public int countUpdate(int bbsCount, int bbsID) {
