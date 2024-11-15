@@ -288,24 +288,38 @@ public class BbsDAO {
 	    return -1;
 	}
 	
-	 public String getDisplayDate(String dateString) {
+	public String getDisplayDate(String dateString) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
-            Date date = sdf.parse(dateString);
-            Date currentDate = new Date();
-            long diffInSeconds = (currentDate.getTime() - date.getTime()) / 1000;
+            String sql = "SELECT NOW() AS currentTime";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
 
-            if (diffInSeconds < 3600) {
-                return (diffInSeconds / 60) + "분 전";
-            } else if (diffInSeconds < 86400) {
-                return (diffInSeconds / 3600) + "시간 전";
-            } else if (diffInSeconds < 604800) {
-                return (diffInSeconds / 86400) + "일 전";
-            } else {
-                return new SimpleDateFormat("yy.MM.dd").format(date);
+            if (rs.next()) {
+                String currentTimeString = rs.getString("currentTime");
+                Date currentDate = sdf.parse(currentTimeString);
+                Date inputDate = sdf.parse(dateString);
+
+                long diffInSeconds = (currentDate.getTime() - inputDate.getTime()) / 1000;
+
+                if (diffInSeconds < 3600) {
+                    return (diffInSeconds / 60) + "분 전";
+                } else if (diffInSeconds < 86400) {
+                    return (diffInSeconds / 3600) + "시간 전";
+                } else if (diffInSeconds < 604800) {
+                    return (diffInSeconds / 86400) + "일 전";
+                } else {
+                    return new SimpleDateFormat("yy.MM.dd").format(inputDate);
+                }
             }
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return dateString;
     }

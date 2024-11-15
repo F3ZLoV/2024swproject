@@ -20,7 +20,7 @@
         script.println("</script>");
     } else {
         request.setCharacterEncoding("UTF-8");
-        String realFolder = "C:/Users/F3ZLoV/git/2024swproject/BBS/src/main/webapp/images";
+        String realFolder = getServletContext().getRealPath("/images");
         int maxSize = 5 * 1024 * 1024;  // 5MB
         String encType = "UTF-8";
 

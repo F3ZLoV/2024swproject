@@ -46,11 +46,12 @@
 </head>
 <body>
 <script>
-    function showReplyForm(commentID) {
-        var replyForm = document.getElementById("replyForm_" + commentID);
-        replyForm.style.display = replyForm.style.display === "none" ? "block" : "none";
-    }
+	function showReplyForm(commentID) {
+	    var replyForm = document.getElementById("replyForm_" + commentID);
+	    replyForm.style.display = replyForm.style.display === "none" ? "block" : "none";
+	}
 </script>
+
 <%
 	String userID = null;
 	if (session.getAttribute("userID") != null) {
@@ -71,8 +72,9 @@
 	CommentDAO commentDAO = new CommentDAO();
 	ArrayList<Comment> list = commentDAO.getList(bbsID);
 	request.setAttribute("commentList", list);
-
 %>
+
+
 	<nav class="navbar navbar-default">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle collapsed"
@@ -177,67 +179,69 @@
 			%>
 		</div>
 	</div>
+	
+	<%!
+	    // 댓글을 계층적으로 출력하고 스타일링을 추가하는 메서드
+	    void renderComments(ArrayList<Comment> comments, int parentID, int depth, javax.servlet.jsp.JspWriter out, String currentUserID) throws Exception {
+	        for (Comment comment : comments) {
+	            if (comment.getParentCommentID() == parentID) {
+	                out.println("<tr style='border-bottom: 1px solid #dddddd; background-color: " + (depth % 2 == 0 ? "#f9f9f9" : "#ffffff") + ";'>");
+	                out.println("<td align='left' colspan='5' style='padding-left: " + (depth * 35) + "px; padding-top: 10px; padding-bottom: 5px;'>");
+	                
+	                // 대댓글 표시 ㄴ자
+	                if (depth > 0) {
+	                    out.println("<span style='color: #aaaaaa;'>ㄴ</span> ");
+	                }
+	                out.println(comment.getUserID() + " &nbsp;&nbsp;" + comment.getCommentDate().substring(2, 10) + 
+	                            " " + comment.getCommentDate().substring(11, 16));
+	                
+	                out.println("<div style='float: right;'>");
+	                if (comment.getUserID().equals(currentUserID)) {
+	                    out.println("<a type='button' onclick='nwindow(" + comment.getBbsID() + ", " + comment.getCommentID() + ")' class='btn-primary'>수정</a> ");
+	                    out.println("<a onclick='return confirm(\"정말로 삭제하시겠습니까?\")' href='commentDeleteAction.jsp?bbsID=" + comment.getBbsID() + "&commentID=" + comment.getCommentID() + "' class='btn-primary'>삭제</a> ");
+	                }
+	                out.println("<a href='#' onclick=\"showReplyForm(" + comment.getCommentID() + ")\" class='btn-primary'>답글</a>");
+	                out.println("</div>");
+	                
+	                out.println("</td>");
+	                out.println("</tr>");
+	                
+	                // 댓글 내용
+	                out.println("<tr style='background-color: " + (depth % 2 == 0 ? "#f9f9f9" : "#ffffff") + ";'>");
+	                out.println("<td colspan='5' align='left' style='padding-left: " + (depth * 35) + "px; padding-bottom: 10px;'>");
+	                out.println(comment.getCommentText().replace("\n", "<br>"));
+	                out.println("</td>");
+	                out.println("</tr>");
+	                
+	                // 답글 입력 폼 (기본은 숨김 처리)
+	                out.println("<tr id='replyForm_" + comment.getCommentID() + "' style='display: none; background-color: " + (depth % 2 == 0 ? "#f9f9f9" : "#ffffff") + ";'>");
+	                out.println("<td colspan='5' style='padding-left: " + (depth * 20) + "px;'>");
+	                out.println("<form method='post' action='commentAction.jsp?bbsID=" + comment.getBbsID() + "'>");
+	                out.println("<input type='hidden' name='parentCommentID' value='" + comment.getCommentID() + "'>");
+	                out.println("<textarea name='commentText' class='form-control' placeholder='답글을 작성해주세요.'></textarea>");
+	                out.println("<input type='submit' class='btn-primary pull' value='답글 작성'>");
+	                out.println("</form>");
+	                out.println("</td>");
+	                out.println("</tr>");
+	                
+	                // 현재 댓글 ID를 부모로 가지는 대댓글을 재귀적으로 렌더링
+	                renderComments(comments, comment.getCommentID(), depth + 1, out, currentUserID);
+	            }
+	        }
+	    }
+	%>
+
+
 	<div class="container">
-    <div class="row">
-        <table class="table table-striped" style="text-align: center; border: 1px solid #dddddd;">
-            <!-- 일반 댓글 반복 출력 -->
-            <c:forEach var="comment" items="${commentList}">
-                <c:if test="${comment.parentCommentID == 0}">
-                    <tbody>
-                        <tr>
-                            <td align="left">
-                                ${comment.userID} &nbsp;&nbsp;
-                                ${comment.commentDate.substring(0, 10)} ${comment.commentDate.substring(11, 13)}시 ${comment.commentDate.substring(14, 16)}분
-                            </td>
-                            <td align="right">
-                                <c:if test="${comment.userID != null && comment.userID == userID}">
-                                    <a type="button" onclick="nwindow(${bbsID}, ${comment.commentID})" class="btn-primary">수정</a>
-                                    <a onclick="return confirm('정말로 삭제하시겠습니까?')" href="commentDeleteAction.jsp?bbsID=${bbsID}&commentID=${comment.commentID}" class="btn-primary">삭제</a>
-                                </c:if>
-                                <a href="#" onclick="showReplyForm(${comment.commentID})" class="btn-primary">답글</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="5" align="left">
-                                ${comment.commentText}
-                            </td>
-                        </tr>
-                        <!-- 대댓글 반복 출력 -->
-                        <c:forEach var="reply" items="${commentList}">
-                            <c:if test="${reply.parentCommentID == comment.commentID}">
-                                <tr>
-                                    <td align="left" colspan="5" style="padding-left: 50px;">
-                                        ${reply.userID} &nbsp;&nbsp;
-                                        ${reply.commentDate.substring(0, 10)} ${reply.commentDate.substring(11, 13)}시 ${reply.commentDate.substring(14, 16)}분
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="5" align="left" style="padding-left: 50px;">
-                                        ${reply.commentText}
-                                    </td>
-                                </tr>
-                                <!-- 답글 입력 폼 -->
-                                <!-- 답글 왜 안되지? 미래의 나 해줘 -->
-                                <tr id="replyForm_${reply.commentID}" style="display: none;">
-                                    <td colspan="5" style="padding-left: 50px;">
-                                        <form method="post" action="commentAction.jsp?bbsID=<%= bbsID %>">
-                                            <input type="hidden" name="parentCommentID" value="${reply.commentID}">
-                                            <textarea name="commentText" class="form-control" placeholder="답글을 작성해주세요."></textarea>
-                                            <input type="submit" class="btn-primary pull" value="답글 작성">
-                                        </form>
-                                    </td>
-                                </tr>
-                            </c:if>
-                        </c:forEach>
-                    </tbody>
-                </c:if>
-            </c:forEach>
-        </table>
-    </div>
-</div>
-
-
-
+	    <div class="row">
+	        <table class="table table-striped" style="text-align: center; border: 1px solid #dddddd;">
+	            <tbody>
+	                <% renderComments(list, 0, 0, out, userID); %>
+	            </tbody>
+	        </table>
+	    </div>
+	</div>
+	
 	<div class="container">
 	    <div class="form-group">
 	    <form method="post" action="commentAction.jsp?bbsID=<%= bbsID %>">
@@ -250,7 +254,7 @@
 	        </table>
 	    </form>
 	    </div>
-	</div>
+	</div>	
 		
 	<!-- FOOTER -->
 	<footer style="background-color: #000000; color: #ffffff">

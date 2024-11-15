@@ -138,7 +138,7 @@
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
 				<li class="active"><a href="main.jsp">Home</a></li>
-				<li><a href="bbs.jsp">General</a></li>
+				<li><a href="bbs.jsp?category=">General</a></li>
 				<li><a href="bbs_review.jsp">Review</a></li>
 				<li><a href="bbs_gallery.jsp">Gallery</a></li>
 				<li><a href="bbs_music.jsp">Musics</a></li>
@@ -193,64 +193,129 @@
 		</div>
 	</nav>
 	<div class="container mt-5">
-    <div class="row">
-        <!-- 최신글 섹션 -->
-        <div class="col-md-6">
-		    <div class="card">
-		        <div class="card-header bg-light">
-		            <h4 class="mb-0">최신글</h4>
-		        </div>
-		        <ul class="list-group list-group-flush">
-		            <% 
-		                SearchDAO recentDAO = new SearchDAO();
-		                ArrayList<PostDTO> latestPosts = recentDAO.getLatestPosts();
-		                int recentNumber = 1;
-		                for (PostDTO post : latestPosts) { 
-		                    String link = null;
-		                    if (post.getBbsTable().equals("bbs")) {
-		                        link = "view.jsp?bbsID=" + post.getBbsID();
-		                    } else {
-		                        link = "view_" + post.getBbsTable() + ".jsp?bbsID=" + post.getBbsID();
-		                    }
-		            %>
-		            <li class="list-group-item">
-		                <a class="number"><%= recentNumber++ %></a><a href="<%= link %>"><%= post.getBbsTitle() %></a>
-		                <span class="recommend"><%= post.getLikeCount() %></span>
-		            </li>
-		            <% } %>
-		        </ul>
-		    </div>
-		</div>
-
-        <!-- 인기글 섹션 -->
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header bg-light">
-                    <h4 class="mb-0">인기글</h4>
-                </div>
-                <ul class="list-group list-group-flush">
-                    <% 
-		                SearchDAO mostLikedDAO = new SearchDAO();
-		                ArrayList<PostDTO> mostLikedPosts = mostLikedDAO.getMostLikedPosts();
-		                int mostLikedNumber = 1;
-		                for (PostDTO post : mostLikedPosts) { 
-		                    String link = null;
-		                    if (post.getBbsTable().equals("bbs")) {
-		                        link = "view.jsp?bbsID=" + post.getBbsID();
-		                    } else {
-		                        link = "view_" + post.getBbsTable() + ".jsp?bbsID=" + post.getBbsID();
-		                    }
-		            %>
-		            <li class="list-group-item">
-		                <a class="number"><%= mostLikedNumber++ %></a><a href="<%= link %>"><%= post.getBbsTitle() %></a>
-		                <span class="recommend"><%= post.getLikeCount() %></span>
-		            </li>
-		            <% } %>
-                </ul>
-            </div>
-        </div>
+	    <div class="row">
+	        <!-- 최신글 섹션 -->
+	        <div class="col-md-6">
+			    <div class="card">
+			        <div class="card-header bg-light">
+			            <h4 class="mb-0">최신글</h4>
+			        </div>
+			        <ul class="list-group list-group-flush">
+			            <% 
+			                SearchDAO recentDAO = new SearchDAO();
+			                ArrayList<PostDTO> latestPosts = recentDAO.getLatestPosts();
+			                int recentNumber = 1;
+			                for (PostDTO post : latestPosts) { 
+			                    String link = null;
+			                    if (post.getBbsTable().equals("bbs")) {
+			                        link = "view.jsp?bbsID=" + post.getBbsID();
+			                    } else {
+			                        link = "view_" + post.getBbsTable() + ".jsp?bbsID=" + post.getBbsID();
+			                    }
+			            %>
+			            <li class="list-group-item">
+			                <a class="number"><%= recentNumber++ %></a><a href="<%= link %>"><%= post.getBbsTitle() %></a>
+			                <span class="recommend"><%= post.getLikeCount() %></span>
+			            </li>
+			            <% } %>
+			        </ul>
+			    </div>
+			</div>
+	
+	        <!-- 인기글 섹션 -->
+	        <div class="col-md-6">
+	            <div class="card">
+	                <div class="card-header bg-light">
+	                    <h4 class="mb-0">인기글</h4>
+	                </div>
+	                <ul class="list-group list-group-flush">
+	                    <% 
+			                SearchDAO mostLikedDAO = new SearchDAO();
+			                ArrayList<PostDTO> mostLikedPosts = mostLikedDAO.getMostLikedPosts();
+			                int mostLikedNumber = 1;
+			                for (PostDTO post : mostLikedPosts) { 
+			                    String link = null;
+			                    if (post.getBbsTable().equals("bbs")) {
+			                        link = "view.jsp?bbsID=" + post.getBbsID();
+			                    } else {
+			                        link = "view_" + post.getBbsTable() + ".jsp?bbsID=" + post.getBbsID();
+			                    }
+			            %>
+			            <li class="list-group-item">
+			                <a class="number"><%= mostLikedNumber++ %></a><a href="<%= link %>"><%= post.getBbsTitle() %></a>
+			                <span class="recommend"><%= post.getLikeCount() %></span>
+			            </li>
+			            <% } %>
+	                </ul>
+	            </div>
+	        </div>
+	    </div>
     </div>
-    </div>
+    
+    <div class="container mt-5">
+	    <div class="row">
+	        <!-- 음악 섹션 -->
+	        <div class="col-md-12">
+	            <div class="card">
+	                <div class="card-header bg-light">
+	                    <h4 class="mb-0">음악</h4>
+	                </div>
+	                <div id="music-thumbnails" class="list-group list-group-flush">
+	                    <% 
+	                        Bbs_musicDAO musicDAO = new Bbs_musicDAO();
+	                        ArrayList<Bbs_music> musicPosts = musicDAO.getMusicPosts();
+	                        int pageSize = 5;
+	                        int pageCount = (int) Math.ceil((double) musicPosts.size() / pageSize);
+	                        for (int i = 0; i < musicPosts.size(); i++) {
+	                            Bbs_music post = musicPosts.get(i);
+	                            String link = "view_music.jsp?bbsID=" + post.getBbsID();
+	                            String content = post.getBbsContent();
+	                            String youtubeId = "";
+	                            
+	                            // YouTube 링크에서 ID 추출
+	                            Pattern pattern = Pattern.compile("https?://(?:www\\.|m\\.)?(?:youtube\\.com/watch\\?v=|youtu\\.be/)([a-zA-Z0-9_-]{11})");
+	                            Matcher matcher = pattern.matcher(content);
+	                            if (matcher.find()) {
+	                                youtubeId = matcher.group(1); // ID 추출
+	                            }
+	                    %>
+	                    <div class="col-md-2 thumbnail-item" data-page="<%= (i / pageSize) + 1 %>" style="display: none;">
+	                        <% if (!youtubeId.isEmpty()) { %>
+	                            <a href="<%= link %>">
+	                                <img src="https://img.youtube.com/vi/<%= youtubeId %>/0.jpg" 
+	                                     alt="<%=post.getBbsTitle() %>" 
+	                                     class="img-thumbnail" 
+	                                     style="width: 120px; height: 90px;">
+	                            </a>
+	                        <% } %>
+	                    </div>
+	                    <% } %>
+	                </div>
+	                <!-- 페이징 버튼 -->
+	                <div class="card-footer text-center">
+	                    <nav aria-label="Page navigation">
+	                        <ul class="pagination justify-content-center">
+	                            <li class="page-item">
+	                                <a class="page-link" href="#" aria-label="Previous" onclick="showPage(currentPage - 1)">
+	                                    <span aria-hidden="true">&laquo;</span>
+	                                </a>
+	                            </li>
+	                            <% for (int i = 1; i <= pageCount; i++) { %>
+	                                <li class="page-item"><a class="page-link" href="#" onclick="showPage(<%= i %>)"><%= i %></a></li>
+	                            <% } %>
+	                            <li class="page-item">
+	                                <a class="page-link" href="#" aria-label="Next" onclick="showPage(currentPage + 1)">
+	                                    <span aria-hidden="true">&raquo;</span>
+	                                </a>
+	                            </li>
+	                        </ul>
+	                    </nav>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+    
 	<div class="container">
 		<div id="myCarousel" class="carousel slide" data-ride="carousel">
 			<ol class="carousel-indicators">
@@ -277,69 +342,7 @@
 			</a>
 		</div>
 	</div>
-	<div class="container mt-5">
-    <div class="row">
-        <!-- 음악 섹션 -->
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header bg-light">
-                    <h4 class="mb-0">음악</h4>
-                </div>
-                <div id="music-thumbnails" class="list-group list-group-flush">
-                    <% 
-                        Bbs_musicDAO musicDAO = new Bbs_musicDAO();
-                        ArrayList<Bbs_music> musicPosts = musicDAO.getMusicPosts();
-                        int pageSize = 5;
-                        int pageCount = (int) Math.ceil((double) musicPosts.size() / pageSize);
-                        for (int i = 0; i < musicPosts.size(); i++) {
-                            Bbs_music post = musicPosts.get(i);
-                            String link = "view_music.jsp?bbsID=" + post.getBbsID();
-                            String content = post.getBbsContent();
-                            String youtubeId = "";
-                            
-                            // YouTube 링크에서 ID 추출
-                            Pattern pattern = Pattern.compile("https?://(?:www\\.|m\\.)?(?:youtube\\.com/watch\\?v=|youtu\\.be/)([a-zA-Z0-9_-]{11})");
-                            Matcher matcher = pattern.matcher(content);
-                            if (matcher.find()) {
-                                youtubeId = matcher.group(1); // ID 추출
-                            }
-                    %>
-                    <div class="col-md-2 thumbnail-item" data-page="<%= (i / pageSize) + 1 %>" style="display: none;">
-                        <% if (!youtubeId.isEmpty()) { %>
-                            <a href="<%= link %>">
-                                <img src="https://img.youtube.com/vi/<%= youtubeId %>/0.jpg" 
-                                     alt="<%=post.getBbsTitle() %>" 
-                                     class="img-thumbnail" 
-                                     style="width: 120px; height: 90px;">
-                            </a>
-                        <% } %>
-                    </div>
-                    <% } %>
-                </div>
-                <!-- 페이징 버튼 -->
-                <div class="card-footer text-center">
-                    <nav aria-label="Page navigation">
-                        <ul class="pagination justify-content-center">
-                            <li class="page-item">
-                                <a class="page-link" href="#" aria-label="Previous" onclick="showPage(currentPage - 1)">
-                                    <span aria-hidden="true">&laquo;</span>
-                                </a>
-                            </li>
-                            <% for (int i = 1; i <= pageCount; i++) { %>
-                                <li class="page-item"><a class="page-link" href="#" onclick="showPage(<%= i %>)"><%= i %></a></li>
-                            <% } %>
-                            <li class="page-item">
-                                <a class="page-link" href="#" aria-label="Next" onclick="showPage(currentPage + 1)">
-                                    <span aria-hidden="true">&raquo;</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+	
 
     <script>
 	    let currentPage = 1;
