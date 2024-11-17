@@ -9,6 +9,22 @@
 <link rel="stylesheet" href="css/bootstrap.css">
 <link rel="stylesheet" href="css/custom.css">
 <title>S/W 프로젝트</title>
+<style>
+    .radio-group {
+        display: flex;
+        justify-content: space-around;
+        align-items: flex-start;
+    }
+    .form-check-inline .form-check-input {
+        margin-right: 5px;
+    }
+
+    .form-check-inline {
+        margin-right: 10px;
+    }
+        
+    }
+</style>
 </head>
 <body>
 	<%
@@ -84,13 +100,15 @@
 				</tr>
 				<tr>
 	                <td>
-	                    <div class="form-check form-check-inline">
-	                        <input class="form-check-input" type="radio" name="status" id="sale" value="판매" checked>
-	                        <label class="form-check-label" for="sale">판매</label>
-	                    </div>
-	                    <div class="form-check form-check-inline">
-	                        <input class="form-check-input" type="radio" name="status" id="purchase" value="구매">
-	                        <label class="form-check-label" for="purchase">구매</label>
+	                	<div class="radio-group">
+		                    <div class="form-check form-check-inline">
+		                        <input class="form-check-input" type="radio" name="status" id="sale" value="판매" checked>
+		                        <label class="form-check-label" for="sale">판매</label>
+		                    </div>
+		                    <div class="form-check form-check-inline">
+		                        <input class="form-check-input" type="radio" name="status" id="purchase" value="구매">
+		                        <label class="form-check-label" for="purchase">구매</label>
+		                    </div>
 	                    </div>
 	                </td>
                 </tr>
