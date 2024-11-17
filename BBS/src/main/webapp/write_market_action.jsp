@@ -8,6 +8,7 @@ request.setCharacterEncoding("UTF-8");
 <jsp:useBean id="bbs_market" class="bbs_market.Bbs_market" scope="page" />
 <jsp:setProperty name="bbs_market" property="bbsTitle"/>
 <jsp:setProperty name="bbs_market" property="bbsContent"/>
+<jsp:setProperty name="bbs_market" property="status"/>
 <!DOCTYPE html>
 <html>
 <head>
@@ -35,7 +36,7 @@ request.setCharacterEncoding("UTF-8");
 			script.println("</script>");
 		} else {
 			Bbs_marketDAO bbsDAO = new Bbs_marketDAO();
-			int result = bbsDAO.write(bbs_market.getBbsTitle(), userID, bbs_market.getBbsContent(), bbs_market.getBbsCount(), bbs_market.getLikeCount());
+			int result = bbsDAO.write(bbs_market.getBbsTitle(), userID, bbs_market.getBbsContent(), bbs_market.getBbsCount(), bbs_market.getLikeCount(), bbs_market.getStatus());
 			if(result == -1) {
 				PrintWriter script = response.getWriter();
 				script.println("<script>");

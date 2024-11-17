@@ -94,6 +94,7 @@
 			    <thead>
 			        <tr>
 			            <th style="background-color: #eeeeee; text-align: center;">번호</th>
+			            <th style="background-color: #eeeeee; text-align: center;">상태</th>
 			            <th style="background-color: #eeeeee; text-align: center;">제목</th>
 			            <th style="background-color: #eeeeee; text-align: center;">작성자</th>
 			            <th style="background-color: #eeeeee; text-align: center;">작성일</th>
@@ -107,6 +108,7 @@
 			        %>
 			        <tr>
 			            <td><%= rankNumber-- %></td> <!-- 게시글 번호 출력 -->
+			            <td><%= bbs.getStatus() %></td>
 			            <td><a href="view_market.jsp?bbsID=<%= bbs.getBbsID() %>"><%= bbs.getBbsTitle().replaceAll(" ", "&nbsp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br>") %></a></td>
 			            <td><%= bbs.getUserID() %></td>
 			            <td><%= bbs.getBbsDate().substring(0, 11) + " " + bbs.getBbsDate().substring(11, 13) + "시" + bbs.getBbsDate().substring(14, 16) + "분" %></td>

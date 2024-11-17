@@ -91,6 +91,22 @@
 					<td><input type="text" class="form-control" placeholder="글 제목" name="bbsTitle" maxlength="50" value="<%= bbs.getBbsTitle() %>"></td>
 				</tr>
 				<tr>
+                    <td>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="status" id="sale" value="판매" <%= "판매".equals(bbs.getStatus()) ? "checked" : "" %>>
+                            <label class="form-check-label" for="sale">판매</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="status" id="purchase" value="구매" <%= "구매".equals(bbs.getStatus()) ? "checked" : "" %>>
+                            <label class="form-check-label" for="purchase">구매</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="status" id="complete" value="완료">
+                            <label class="form-check-label" for="purchase">완료</label>
+                        </div>
+                    </td>
+                </tr>
+				<tr>
 					<td><textarea class="form-control" placeholder="글 내용" name="bbsContent" maxlength="2048" style="height: 350px"><%= bbs.getBbsContent() %></textarea></td>
 				</tr>
 			</tbody>

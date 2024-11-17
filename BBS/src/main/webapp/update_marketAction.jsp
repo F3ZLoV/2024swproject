@@ -54,7 +54,7 @@ request.setCharacterEncoding("UTF-8");
 			script.println("</script>");
 			} else {
 				Bbs_marketDAO bbsDAO = new Bbs_marketDAO();
-				int result = bbsDAO.update(bbsID, request.getParameter("bbsTitle"), request.getParameter("bbsContent"));
+				int result = bbsDAO.update(bbsID, request.getParameter("bbsTitle"), request.getParameter("bbsContent"), request.getParameter("status"));
 				if(result == -1) {
 					PrintWriter script = response.getWriter();
 					script.println("<script>");

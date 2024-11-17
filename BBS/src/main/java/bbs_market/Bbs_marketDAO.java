@@ -54,8 +54,8 @@ public class Bbs_marketDAO {
     }
 
     // 리뷰 작성 메서드
-    public int write(String bbsTitle, String userID, String bbsContent, int bbsCount, int likeCount) {
-		String SQL = "INSERT INTO BBS_MARKET VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    public int write(String bbsTitle, String userID, String bbsContent, int bbsCount, int likeCount, String status) {
+		String SQL = "INSERT INTO BBS_MARKET VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			pstmt.setInt(1,  getNext());
@@ -66,6 +66,7 @@ public class Bbs_marketDAO {
 			pstmt.setInt(6, 1);
 			pstmt.setInt(7, bbsCount);
 			pstmt.setInt(8, likeCount);
+			pstmt.setString(9, status);
 			return pstmt.executeUpdate();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -94,6 +95,7 @@ public class Bbs_marketDAO {
 	            bbs.setBbsAvailable(rs.getInt(6));
 	            bbs.setBbsCount(rs.getInt(7));
 	            bbs.setLikeCount(rs.getInt(8));
+	            bbs.setStatus(rs.getString(9));
 	            list.add(bbs);
 	        }
 	    } catch (Exception e) {
@@ -138,6 +140,7 @@ public class Bbs_marketDAO {
 				bbsCount++;
 				countUpdate(bbsCount, bbsID);
 				bbs.setLikeCount(rs.getInt(8));
+				bbs.setStatus(rs.getString(9));
 				return bbs;
             }
         } catch (Exception e) {
@@ -147,13 +150,14 @@ public class Bbs_marketDAO {
     }
 
     // 리뷰 수정 메서드
-    public int update(int bbsID, String bbsTitle, String bbsContent) {
-        String SQL = "UPDATE BBS_MARKET SET bbsTitle = ?, bbsContent = ? WHERE bbsID = ?";
+    public int update(int bbsID, String bbsTitle, String bbsContent, String status) {
+        String SQL = "UPDATE BBS_MARKET SET bbsTitle = ?, bbsContent = ?, status = ? WHERE bbsID = ?";
         try {
             PreparedStatement pstmt = conn.prepareStatement(SQL);
             pstmt.setString(1, bbsTitle);
             pstmt.setString(2, bbsContent);
-            pstmt.setInt(3, bbsID);
+            pstmt.setString(3, status);
+            pstmt.setInt(4, bbsID);
             return pstmt.executeUpdate(); // SQL 실행
         } catch (Exception e) {
             e.printStackTrace();
