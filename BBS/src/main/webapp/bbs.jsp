@@ -3,6 +3,8 @@
 <%@ page import="java.io.PrintWriter" %>
 <%@ page import="bbs.BbsDAO" %>
 <%@ page import="bbs.Bbs" %>
+<%@ page import="comment.CommentDAO" %>
+<%@ page import="comment.Comment" %>
 <%@ page import="java.util.ArrayList" %>
 <!DOCTYPE html>
 <html>
@@ -143,6 +145,7 @@
         <div class="row">
             <%
 	            BbsDAO bbsDAO = new BbsDAO();
+            	CommentDAO commentDAO = new CommentDAO();
 	            ArrayList<Bbs> list = bbsDAO.getList(pageNumber, category, sortBy, sortOrder);
 	            int totalCount = (category == null || category.isEmpty()) 
 	                    ? bbsDAO.getTotalCount() : bbsDAO.getTotalCountByCategory(category);
@@ -167,7 +170,12 @@
 		        <tr>
 		            <td><%= rankNumber-- %></td> <!-- 게시글 번호 출력 -->
 		            <td><%= bbs.getCategory() %></td> <!-- 카테고리 출력 -->
-		            <td style="text-align: left;"><a href="view.jsp?bbsID=<%= bbs.getBbsID() %>"><%= bbs.getBbsTitle().replaceAll(" ", "&nbsp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br>") %></a></td>
+		            <td style="text-align: left;">
+		            	<a href="view.jsp?bbsID=<%= bbs.getBbsID() %>"><%= bbs.getBbsTitle().replaceAll(" ", "&nbsp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br>") %></a>
+		            	<span style="color: red; text-decoration: underline;"> 
+		            		<%=commentDAO.getCommentCount(bbs.getBbsID()) %>
+		            	</span>
+		            </td>
 		            <td><%= bbs.getUserID() %></td>
 		            <td><%= bbsDAO.getDisplayDate(bbs.getBbsDate()) %></td>
 		            <td><%= bbs.getBbsCount() %></td>

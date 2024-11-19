@@ -19,6 +19,109 @@
 <link rel="stylesheet" href="css/custom.css">
 <title>S/W 프로젝트</title>
 <style>
+	body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+    }
+ 	.post-container {
+        max-width: 1200px;
+        padding: 20px; 
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        background-color: #fff; 
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+    .post-image {
+        width: 100%;
+        height: auto;
+    }
+    .post-header {
+        padding: 30px;
+        background-color: #f7f7f7;
+    }
+    .post-header .category {
+        display: inline-block;
+        padding: 8px 15px;
+        background-color: #007bff;
+        color: white;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+    .post-header .title {
+        margin-top: 10px;
+        font-size: 24px;
+        font-weight: bold;
+    }
+    .post-info {
+        margin-top: 10px;
+        font-size: 12px;
+        color: #666;
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .post-info div {
+        display: flex;
+        align-items: center;
+    }
+
+    .post-info .user-id {
+        color: #000000; /* 사용자 ID 색상 */
+        font-weight: bold;
+    }
+
+    .post-info .date {
+        color: #9FA09F; /* 작성일 색상 */
+        margin-left: 10px;
+    }
+
+    .post-info .stats {
+        display: flex;
+        gap: 15px; /* 통계 아이콘 간격 */
+        color: #666; /* 기본 회색 */
+        align-items: center;
+    }
+
+    .post-info .stats .icon {
+        display: flex;
+        align-items: center;
+        gap: 15px; /* 아이콘과 숫자 간격 */
+    }
+
+    .post-info .stats .views {
+        color: #666; /* 조회수 색상 */
+    }
+
+    .post-info .stats .likes {
+        color: #ff4d4f; /* 좋아요 색상 */
+    }
+
+    .post-info .stats .comments {
+        color: #000000; /* 댓글 색상 */
+    }
+    .post-content {
+        padding: 30px;
+        line-height: 1.8;
+        font-size: 18px;
+        color: #333;
+    }
+    .post-stats {
+        text-align: right;
+        padding: 15px 30px;
+        border-top: 1px solid #ddd;
+        font-size: 12px;
+        background-color: #f7f7f7;
+    }
+    a.btn {
+        margin-left: 10px;
+    }
+
+    .icon {
+        font-size: 18px;
+        vertical-align: middle;
+    }
  /* 댓글 스타일 */
     .comment {
         margin-bottom: 20px;
@@ -45,6 +148,7 @@
 </style>
 </head>
 <body>
+<script src="https://kit.fontawesome.com/957b70594e.js" crossorigin="anonymous"></script>
 <script>
 	function showReplyForm(commentID) {
 	    var replyForm = document.getElementById("replyForm_" + commentID);
@@ -127,68 +231,52 @@
 			%>
 		</div>
 	</nav>
-	<div class="container">
+	<div class="post-container">
 		<div class="row">
-			<table class="table table-striped" style="text-align: center; border: 1px solid #dddddd">
-				<thead>
-					<tr>
-						<th colspan="3" style="background-color: #eeeeee; text-align: center;">게시판 글 보기</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-				        <td style="width: 20%;"></td>
-				        <td colspan="2"><small><%= bbs.getCategory() %></small></td>
-				    </tr>
-					<tr>
-						<td style="width: 20%;">글 제목</td>
-						<td colspan="2"><%= bbs.getBbsTitle().replaceAll(" ", "&nbsp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br>") %></td>
-					</tr>
-					<tr>
-						<td>작성자</td>
-						<td colspan="2"><%= bbs.getUserID() %></td>
-					</tr>
-					<tr>
-						<td>작성일자</td>
-						<td colspan="2"><%= bbs.getBbsDate().substring(0, 11) + bbs.getBbsDate().substring(11, 13) + "시" + bbs.getBbsDate().substring(14, 16) + "분" %></td>
-					</tr>
-					<tr>
-						<td>내용</td>
-						<td colspan="2" style="min-height: 200px; text-align: left;"><%= bbs.getBbsContent().replaceAll(" ", "&nbsp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br>") %></td>
-					</tr>
-					<tr>
-						<td>조회수</td>
-						<td colspan="2"><%=bbs.getBbsCount() + 1 %></td>
-					</tr>
-					<tr>
-						<td>추천수</td>
-						<td colspan="2">+<%=bbs.getLikeCount() %></td>
-					</tr>
-				</tbody>
-			</table>
-			<a href="bbs.jsp" class="btn btn-primary">목록</a>
-			<a onclick="return confirm('추천하시겠습니까?')" href="likeAction.jsp?bbsID=<%=bbsID %>"
-				 class="btn btn-success pull-right">👍</a>
-			<%
-				if(userID != null && userID.equals(bbs.getUserID())) {
-			%>
-				<a href="update.jsp?bbsID=<%= bbsID %>" class="btn btn-primary">수정</a>
-				<a onclick="return confirm('정말로 삭제하시겠습니까?')" href="deleteAction.jsp?bbsID=<%= bbsID %>" class="btn btn-primary">삭제</a>
-			<%
-				}
-			%>
+			<div class="post-header">
+		        <span class="category"><%= bbs.getCategory() %></span>
+		        <div class="title"><%= bbs.getBbsTitle() %></div>
+		        <div class="post-info">
+		            <div>
+		                 <%= bbs.getUserID() %> &nbsp;&nbsp;&nbsp;&nbsp; <%= bbs.getBbsDate().substring(0, 16) %>
+		            </div>
+		            <div>
+						<div class="icon views">
+	                        <i class="fas fa-eye"></i> <span><%= bbs.getBbsCount() %></span>
+	                    </div>
+	                    &nbsp;&nbsp;
+	                    <div class="icon likes">
+	                        <i class="fas fa-thumbs-up"></i> <span><%= bbs.getLikeCount() %></span>
+	                    </div>
+	                    &nbsp;&nbsp;
+	                    <div class="icon comments">
+	                        <i class="fas fa-comment-dots"></i> <span><%= list.size() %></span>
+	                    </div>
+                    </div>
+		        </div>
+		    </div>
+		    <div class="post-content">
+		        <%= bbs.getBbsContent().replaceAll("\n", "<br>") %>
+		    </div>
+		    <div class="post-stats">
+		        <a href="likeAction.jsp?bbsID=<%= bbsID %>" class="btn btn-success">👍 좋아요</a>
+		        <% if (userID != null && userID.equals(bbs.getUserID())) { %>
+		            <a href="update.jsp?bbsID=<%= bbsID %>" class="btn btn-primary">수정</a>
+		            <a href="deleteAction.jsp?bbsID=<%= bbsID %>" class="btn btn-danger" onclick="return confirm('삭제하시겠습니까?')">삭제</a>
+		        <% } %>
+		    </div>
 		</div>
 	</div>
 	
 	<%!
-	    // 댓글을 계층적으로 출력하고 스타일링을 추가하는 메서드
+	    // 댓글 계층 출력 메서드
 	    void renderComments(ArrayList<Comment> comments, int parentID, int depth, javax.servlet.jsp.JspWriter out, String currentUserID) throws Exception {
 	        for (Comment comment : comments) {
 	            if (comment.getParentCommentID() == parentID) {
 	                out.println("<tr style='border-bottom: 1px solid #dddddd; background-color: " + (depth % 2 == 0 ? "#f9f9f9" : "#ffffff") + ";'>");
 	                out.println("<td align='left' colspan='5' style='padding-left: " + (depth * 35) + "px; padding-top: 10px; padding-bottom: 5px;'>");
 	                
-	                // 대댓글 표시 ㄴ자
+	                // 대댓글 표시 구분자
 	                if (depth > 0) {
 	                    out.println("<span style='color: #aaaaaa;'>ㄴ</span> ");
 	                }
@@ -224,7 +312,7 @@
 	                out.println("</td>");
 	                out.println("</tr>");
 	                
-	                // 현재 댓글 ID를 부모로 가지는 대댓글을 재귀적으로 렌더링
+	                // 현재 댓글 ID를 부모로 가지는 대댓글을 재귀호출
 	                renderComments(comments, comment.getCommentID(), depth + 1, out, currentUserID);
 	            }
 	        }

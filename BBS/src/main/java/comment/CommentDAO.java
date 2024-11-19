@@ -184,4 +184,19 @@ public class CommentDAO {
 		}
 		return -1; // 데이터베이스 오류
 	}
+	
+	public int getCommentCount(int bbsID) {
+		String SQL = "SELECT count(*) FROM comment WHERE bbsID = ?";
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1, bbsID);
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				return rs.getInt(1);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return -1;
+ 	}
 }
