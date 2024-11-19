@@ -8,6 +8,9 @@
 <meta name="viewport" content="width=device-width", initial-scale="1">
 <link rel="stylesheet" href="css/bootstrap.css">
 <link rel="stylesheet" href="css/custom.css">
+<%
+	request.setCharacterEncoding("UTF-8");
+%>
 <html>
 <head>
     <title>S/W 프로젝트</title>

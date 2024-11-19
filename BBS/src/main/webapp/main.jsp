@@ -8,6 +8,9 @@
 <%@ page import="search.PostDTO" %>
 <%@ page import="bbs_music.Bbs_musicDAO" %>
 <%@ page import="bbs_music.Bbs_music" %>
+<%
+	request.setCharacterEncoding("UTF-8");
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -145,20 +148,20 @@
 				<li><a href="bbs_market.jsp">Market</a></li>
 			</ul>
 			<div class="navbar-form navbar-left">
-                    <form method="post" name="search" action="searchResult.jsp" class="form-inline">
-                        <div class="form-group">
-                            <select class="form-control" name="searchField">
-                                <option value="0">선택</option>
-                                <option value="bbsTitle">제목</option>
-                                <option value="userID">작성자</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="검색어 입력" name="searchText" maxlength="100">
-                        </div>
-                        <button type="submit" class="btn btn-success">검색</button>
-                    </form>
-                </div>
+                <form method="post" name="search" action="searchResult.jsp" class="form-inline">
+                    <div class="form-group">
+                        <select class="form-control" name="searchField">
+                            <option value="0">선택</option>
+                            <option value="bbsTitle">제목</option>
+                            <option value="userID">작성자</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="검색어 입력" name="searchText" maxlength="100">
+                    </div>
+                    <button type="submit" class="btn btn-success">검색</button>
+                </form>
+            </div>
 			<%
 				if(userID == null) {
 			%>

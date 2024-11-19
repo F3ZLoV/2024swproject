@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import bbs_gallery.Bbs_gallery;
 
@@ -226,6 +228,42 @@ public class Bbs_musicDAO {
             e.printStackTrace();
         }
         return musicPosts;
+    }
+	
+	public String getDisplayDate(String dateString) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            String sql = "SELECT NOW() AS currentTime";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                String currentTimeString = rs.getString("currentTime");
+                Date currentDate = sdf.parse(currentTimeString);
+                Date inputDate = sdf.parse(dateString);
+
+                long diffInSeconds = (currentDate.getTime() - inputDate.getTime()) / 1000;
+
+                if (diffInSeconds < 3600) {
+                    return (diffInSeconds / 60) + "분 전";
+                } else if (diffInSeconds < 86400) {
+                    return (diffInSeconds / 3600) + "시간 전";
+                } else if (diffInSeconds < 604800) {
+                    return (diffInSeconds / 86400) + "일 전";
+                } else {
+                    return new SimpleDateFormat("yy.MM.dd").format(inputDate);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return dateString;
     }
 
 }
