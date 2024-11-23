@@ -87,7 +87,7 @@
 			        <td><textarea class="form-control" placeholder="글 내용" name="bbsContent" maxlength="2048" style="height: 350px" required></textarea></td>
 			      </tr>
 			      <tr>
-			        <td><input type="file" name="imageFile" class="form-control" accept="image/*" required></td>
+			        <td><input type="file" name="imageFiles" class="form-control" accept="image/*" multiple required></td>
 			      </tr>
 			    </tbody>
 			  </table>

@@ -1,56 +1,92 @@
-<%@page import="bbs_gallery.Bbs_gallery"%>
-<%@ page import="com.oreilly.servlet.MultipartRequest" %>
-<%@ page import="com.oreilly.servlet.multipart.DefaultFileRenamePolicy" %>
-<%@ page import="java.io.File" %>
-<%@ page import="bbs_gallery.Bbs_galleryDAO" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.io.PrintWriter" %>
-<jsp:useBean id="bbs_gallery" class="bbs_gallery.Bbs_gallery" scope="page" />
+<%@ page import="java.io.*" %>
+<%@ page import="java.util.*" %>
+<%@ page import="javax.servlet.*" %>
+<%@ page import="javax.servlet.http.*" %>
+<%@ page import="org.apache.commons.fileupload.*" %>
+<%@ page import="org.apache.commons.fileupload.disk.*" %>
+<%@ page import="org.apache.commons.fileupload.servlet.*" %>
+<%@ page import="bbs_gallery.Bbs_galleryDAO" %>
+
 <%
-    // 로그인 체크
-    String userID = null;
-    if(session.getAttribute("userID") != null) {
-        userID = (String) session.getAttribute("userID");
+    String userID = (String) session.getAttribute("userID");
+    if (userID == null) {
+        response.setContentType("text/html; charset=UTF-8");
+        out.println("<script>alert('로그인 후 이용하세요.'); location.href='login.jsp';</script>");
+        return;
     }
-    if(userID == null) {
-        PrintWriter script = response.getWriter();
-        script.println("<script>");
-        script.println("alert('로그인을 하세요.');");
-        script.println("location.href = 'login.jsp';");
-        script.println("</script>");
-    } else {
-        request.setCharacterEncoding("UTF-8");
-        String realFolder = getServletContext().getRealPath("/images");
-        int maxSize = 5 * 1024 * 1024;  // 5MB
-        String encType = "UTF-8";
 
-        MultipartRequest multi = new MultipartRequest(request, realFolder, maxSize, encType, new DefaultFileRenamePolicy());
+    String uploadPath = getServletContext().getRealPath("/images");
+    File uploadDir = new File(uploadPath);
 
-        String bbsTitle = multi.getParameter("bbsTitle");
-        String bbsContent = multi.getParameter("bbsContent");
-        String fileName = multi.getFilesystemName("imageFile");
+    if (!uploadDir.exists()) {
+        uploadDir.mkdirs(); // 업로드 디렉토리 생성
+    }
 
-        if (bbsTitle == null || bbsContent == null || fileName == null) {
-            PrintWriter script = response.getWriter();
-            script.println("<script>");
-            script.println("alert('입력되지 않은 사항이 있습니다.');");
-            script.println("history.back();");
-            script.println("</script>");
-        } else {
-            Bbs_galleryDAO bbsDAO = new Bbs_galleryDAO();
-            int result = bbsDAO.write(bbsTitle, userID, bbsContent, "/images/" + fileName, bbs_gallery.getBbsCount(), bbs_gallery.getLikeCount());
-            if (result == -1) {
-                PrintWriter script = response.getWriter();
-                script.println("<script>");
-                script.println("alert('글쓰기에 실패했습니다.');");
-                script.println("history.back();");
-                script.println("</script>");
-            } else {
-                PrintWriter script = response.getWriter();
-                script.println("<script>");
-                script.println("location.href='bbs_gallery.jsp';");
-                script.println("</script>");
+    List<String> uploadedFiles = new ArrayList<>();
+    String bbsTitle = null;
+    String bbsContent = null;
+
+    try {
+        DiskFileItemFactory factory = new DiskFileItemFactory();
+        factory.setRepository(new File(System.getProperty("java.io.tmpdir")));
+        factory.setSizeThreshold(5 * 1024 * 1024); // 메모리 임계값 5MB
+
+        ServletFileUpload upload = new ServletFileUpload(factory);
+        upload.setFileSizeMax(10 * 1024 * 1024); // 파일 당 최대 크기 10MB
+        upload.setSizeMax(50 * 1024 * 1024); // 전체 요청 최대 크기 50MB
+
+        List<FileItem> formItems = upload.parseRequest(request);
+
+        if (formItems != null && !formItems.isEmpty()) {
+            for (FileItem item : formItems) {
+                if (item.isFormField()) {
+                    // 일반 폼 필드 처리
+                    if ("bbsTitle".equals(item.getFieldName())) {
+                        bbsTitle = item.getString("UTF-8");
+                    } else if ("bbsContent".equals(item.getFieldName())) {
+                        bbsContent = item.getString("UTF-8");
+                    }
+                } else {
+                    // 파일 필드 처리
+                    String fileName = new File(item.getName()).getName();
+                    if (fileName != null && !fileName.isEmpty()) {
+                        String filePath = uploadPath + File.separator + fileName;
+                        File storeFile = new File(filePath);
+
+                        // 파일 저장
+                        item.write(storeFile);
+
+                        // 이미지 파일 MIME 타입 검증
+                        String mimeType = getServletContext().getMimeType(filePath);
+                        if (mimeType == null || !mimeType.startsWith("image")) {
+                            storeFile.delete(); // 이미지가 아니면 삭제
+                        } else {
+                            uploadedFiles.add("/images/" + fileName);
+                        }
+                    }
+                }
             }
         }
+
+        // 유효성 검사 실패 처리
+        if (bbsTitle == null || bbsContent == null || uploadedFiles.isEmpty()) {
+            out.println("<script>alert('입력된 내용이 없거나 이미지 파일만 업로드 가능합니다.'); history.back();</script>");
+            return;
+        }
+
+        // DB 저장
+        Bbs_galleryDAO bbsDAO = new Bbs_galleryDAO();
+        String filesPath = String.join(",", uploadedFiles); // 쉼표로 구분된 문자열 생성
+        int result = bbsDAO.write(bbsTitle, userID, bbsContent, filesPath, 0, 0);
+
+        if (result == -1) {
+            out.println("<script>alert('글쓰기에 실패했습니다.'); history.back();</script>");
+        } else {
+            response.sendRedirect("bbs_gallery.jsp");
+        }
+    } catch (Exception ex) {
+        ex.printStackTrace();
+        out.println("<script>alert('파일 업로드 중 오류가 발생했습니다.'); history.back();</script>");
     }
 %>

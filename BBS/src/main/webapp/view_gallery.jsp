@@ -7,7 +7,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta name="viewport" content="width=device-width", initial-scale="1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="css/bootstrap.css">
 <link rel="stylesheet" href="css/custom.css">
 <title>S/W 프로젝트</title>
@@ -116,15 +116,30 @@
 						<td>추천수</td>
 						<td colspan="2">+<%=bbs.getLikeCount() %></td>
 					</tr>
-					<tr align="center">
-						<td>
-							<% if(bbs.getImagePath() != null && !bbs.getImagePath().isEmpty()) { %>
-								<img src="<%= request.getContextPath() %><%=bbs.getImagePath() %>" alt="게시글 이미지" width="550" height=auto>
-							<% } else { %>
-								<p>이미지가 존재하지 않습니다.</p>
-							<% } %>
-						</td>
-					</tr>
+					<tr>
+		                <td colspan="2" style="text-align: center;">
+		                    <%
+		                        if (bbs.getImagePath() != null && !bbs.getImagePath().isEmpty()) {
+		                            String[] images = bbs.getImagePath().split(",");
+		                            for (String imgPath : images) {
+		                                imgPath = imgPath.trim();
+		                                if (!imgPath.isEmpty()) {
+		                    %>
+		                    <img src="<%= request.getContextPath() + imgPath %>" 
+		                         alt="게시글 이미지" 
+		                         class="img-thumbnail" 
+		                         style="max-width: 100%; height: auto; margin-bottom: 10px;">
+		                    <%
+		                                }
+		                            }
+		                        } else {
+		                    %>
+		                    <p>이미지가 없습니다.</p>
+		                    <%
+		                        }
+		                    %>
+		                </td>
+		            </tr>
 				</tbody>
 			</table>
 			<a href="bbs_gallery.jsp" class="btn btn-primary">목록</a>

@@ -55,8 +55,8 @@ public class Bbs_galleryDAO {
         return -1; // DB 오류
     }
 
-    public int write(String bbsTitle, String userID, String bbsContent, String imagePath, int bbsCount, int likeCount) {
-        String SQL = "INSERT INTO BBS_GALLERY VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    public int write(String bbsTitle, String userID, String bbsContent, String imagePaths, int bbsCount, int likeCount) {
+        String SQL = "INSERT INTO BBS_GALLERY (bbsID, bbsTitle, userID, bbsDate, bbsContent, bbsAvailable, imagePath, bbsCount, likeCount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try {
             PreparedStatement pstmt = conn.prepareStatement(SQL);
             pstmt.setInt(1, getNext());
@@ -65,9 +65,9 @@ public class Bbs_galleryDAO {
             pstmt.setString(4, getDate());
             pstmt.setString(5, bbsContent);
             pstmt.setInt(6, 1);
-            pstmt.setString(7, imagePath);  // 이미지 경로 저장
+            pstmt.setString(7, imagePaths); // 이미지 경로 문자열로 저장
             pstmt.setInt(8, bbsCount);
-			pstmt.setInt(9, likeCount);
+            pstmt.setInt(9, likeCount);
             return pstmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
